@@ -129,13 +129,6 @@
   pointer-events: auto;
 }
 
-/* Clip propio de cada paso/edición — solo existe para el layout mobile
-   (ver .cine-slide-clip en el media query de abajo); en desktop el video
-   pineado ya cubre toda la pantalla, así que esto queda oculto. */
-.cine-slide-clip {
-  display: none;
-}
-
 .cine-slide-num {
   display: block;
   font-family: var(--font-display);
@@ -168,7 +161,11 @@
   font-size: 1.02rem;
 }
 
-@media (max-width: 767px) {
+/* Fallback plano SOLO para prefers-reduced-motion (accesibilidad, no
+   tamaño de pantalla): el pin+scrub de pantalla completa se desactiva en
+   Experience.tsx y acá el layout cae a un banner en loop + contenido
+   apilado estático, igual en mobile y desktop. */
+@media (prefers-reduced-motion: reduce) {
   .cine-wrap {
     height: auto !important;
   }
@@ -213,22 +210,6 @@
     box-shadow: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-  }
-
-  .cine-slide-clip {
-    display: block;
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    border-radius: 16px;
-    overflow: hidden;
-    margin-bottom: 20px;
-  }
-
-  .cine-slide-clip video {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
 }
 

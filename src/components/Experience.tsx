@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import {
   COMBINED_VIDEO_SRC,
   EDITION,
@@ -50,69 +50,6 @@ const EDITION_BOUNDARIES = (() => {
   return bounds
 })()
 
-// Rango (0..1 del video completo) que le corresponde a cada paso/edición —
-// se usa en mobile para que cada tarjeta tenga su propio clip en loop, en
-// vez de mostrar el video completo repitiéndose sin relación con el texto.
-const stepVideoRange = (i: number) => {
-  const span = STEPS_END_FRACTION - HERO_VIDEO_FRACTION
-  return {
-    start: HERO_VIDEO_FRACTION + STEP_BOUNDARIES[i] * span,
-    end: HERO_VIDEO_FRACTION + STEP_BOUNDARIES[i + 1] * span,
-  }
-}
-
-const editionVideoRange = (i: number) => {
-  const span = 1 - WALK_END_FRACTION
-  return {
-    start: WALK_END_FRACTION + EDITION_BOUNDARIES[i] * span,
-    end: WALK_END_FRACTION + EDITION_BOUNDARIES[i + 1] * span,
-  }
-}
-
-// Clip de video acotado a [start, end] (fracciones de la duración total):
-// se usa solo en mobile, una instancia por paso/edición, para que cada
-// tarjeta muestre y repita únicamente SU parte del video. Solo reproduce
-// mientras está en pantalla (ahorra batería/datos en mobile).
-function SegmentVideo({ start, end, className }: { start: number; end: number; className?: string }) {
-  const ref = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    const video = ref.current
-    if (!video) return
-
-    const onLoaded = () => {
-      if (video.duration) video.currentTime = start * video.duration
-    }
-    const onTimeUpdate = () => {
-      if (video.duration && video.currentTime >= end * video.duration - 0.05) {
-        video.currentTime = start * video.duration
-      }
-    }
-    video.addEventListener('loadedmetadata', onLoaded)
-    video.addEventListener('timeupdate', onTimeUpdate)
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) video.play?.().catch(() => {})
-        else video.pause()
-      },
-      { rootMargin: '200px 0px' },
-    )
-    observer.observe(video)
-
-    return () => {
-      video.removeEventListener('loadedmetadata', onLoaded)
-      video.removeEventListener('timeupdate', onTimeUpdate)
-      observer.disconnect()
-    }
-  }, [start, end])
-
-  return (
-    // eslint-disable-next-line jsx-a11y/media-has-caption
-    <video ref={ref} className={className} src={COMBINED_VIDEO_SRC} muted playsInline preload="none" />
-  )
-}
-
 // Toda la experiencia -- portada, los 4 pasos, la caminata y las 3
 // ediciones -- vive en UN SOLO track pineado con UN SOLO <video>. Antes
 // eran dos componentes con dos elementos <video> distintos (apuntando al
@@ -151,7 +88,11 @@ export default function Experience() {
   useLayoutEffect(() => {
     const mm = gsap.matchMedia()
 
-    mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+    // Pin + scrub a pantalla completa en TODOS los anchos (incluido mobile):
+    // es una sola cámara, de principio a fin, no una lista de clips. Solo
+    // se desactiva con prefers-reduced-motion (accesibilidad, no tamaño de
+    // pantalla).
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
       const cleanups: Array<() => void> = []
       const video = videoRef.current
 
@@ -231,11 +172,10 @@ export default function Experience() {
       return () => cleanups.forEach((fn) => fn())
     })
 
-    // Mobile / reduced-motion: sin pin — el video de portada es un banner
-    // en loop acotado solo a SU tramo (no todo el video completo, que no
-    // tiene relación con el texto de portada); cada paso/edición más abajo
-    // trae su propio clip (ver SegmentVideo) en vez de repetir este mismo.
-    mm.add('(max-width: 767px), (prefers-reduced-motion: reduce)', () => {
+    // Reduced-motion: sin pin ni scroll-jacking — el video de portada es
+    // un banner en loop acotado solo a SU tramo, todo el contenido queda
+    // apilado y estático.
+    mm.add('(prefers-reduced-motion: reduce)', () => {
       gsap.set(heroContentRef.current, { clearProps: 'all' })
       const video = videoRef.current
       if (!video) return
@@ -298,9 +238,6 @@ export default function Experience() {
           <div className="cine-slides">
             {STEPS.map((s, i) => (
               <div key={s.id} className={i === activeStep ? 'cine-slide active' : 'cine-slide'}>
-                <div className="cine-slide-clip" aria-hidden="true">
-                  <SegmentVideo {...stepVideoRange(i)} />
-                </div>
                 <span className="cine-slide-num" aria-hidden="true">
                   {s.number}
                 </span>
@@ -323,9 +260,6 @@ export default function Experience() {
           <div className="cine-slides">
             {EDITION_NAMES.map((name, i) => (
               <div key={name} className={i === activeEditionIndex ? 'cine-slide active' : 'cine-slide'}>
-                <div className="cine-slide-clip" aria-hidden="true">
-                  <SegmentVideo {...editionVideoRange(i)} />
-                </div>
                 <span className="cine-slide-dot" style={{ background: EDITIONS[name] }} aria-hidden="true" />
                 <h3>{EDITION_LABELS[name]}</h3>
                 <p>{EDITION_DESCRIPTIONS[name]}</p>
