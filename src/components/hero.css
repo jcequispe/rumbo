@@ -1,0 +1,52 @@
+/* El contenido del Hero vive dentro de .cine-pin (ver fallback.css) junto
+   al video y las diapositivas de "Qué hay adentro" — una sola caja
+   pineada, un solo video, sin corte entre portada y pasos. Colores en
+   tono navy/crema porque el video (stick-figure) ya es claro. */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 620px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 90px 7vw 0;
+  transform-origin: left center;
+  will-change: transform, opacity;
+}
+
+.hero-content .eyebrow {
+  color: var(--accent-cool);
+}
+
+.hero-content h1 {
+  font-size: clamp(2.2rem, 3.6vw, 3.2rem);
+  color: var(--fg);
+  margin-bottom: 22px;
+}
+
+.hero-content .subtitle {
+  color: var(--fg-dim);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  margin-bottom: 30px;
+  max-width: 48ch;
+}
+
+.hero-content .cta-ghost {
+  border-color: rgba(34, 48, 74, 0.28);
+  color: var(--fg);
+}
+
+.hero-content .cta-ghost:hover {
+  border-color: var(--fg);
+}
+
+@media (max-width: 767px) {
+  .hero-content {
+    position: static;
+    height: auto;
+    max-width: none;
+    padding: 40px 7vw 0;
+  }
+}

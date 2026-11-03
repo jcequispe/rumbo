@@ -1,0 +1,240 @@
+.journey {
+  position: relative;
+  width: 100%;
+}
+
+.journey-anchor {
+  position: absolute;
+  left: 0;
+  display: block;
+  width: 1px;
+  height: 1px;
+  scroll-margin-top: 90px;
+}
+
+.journey-sticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.journey-sticky > .canvas-container,
+.journey-sticky canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.journey-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 90px 7vw 0;
+  max-width: 460px;
+  pointer-events: none;
+}
+
+.journey-overlay .cta,
+.journey-overlay button {
+  pointer-events: auto;
+}
+
+.eyebrow {
+  color: var(--accent-cool);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  transition: opacity 0.4s var(--ease);
+}
+
+.journey-hero h1 {
+  font-size: clamp(2.2rem, 4.6vw, 3.4rem);
+  color: var(--fg);
+  margin-bottom: 20px;
+}
+
+.journey-hero .subtitle {
+  color: var(--fg-dim);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  margin-bottom: 28px;
+}
+
+.cta-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 26px;
+  border-radius: 100px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.25s var(--ease), background 0.25s var(--ease);
+  white-space: nowrap;
+}
+
+.cta-primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.cta-primary:hover {
+  transform: translateY(-2px);
+}
+
+.cta-ghost {
+  background: transparent;
+  border: 1px solid rgba(34, 48, 74, 0.28);
+  color: var(--fg);
+}
+
+.cta-ghost:hover {
+  border-color: var(--fg);
+}
+
+.price-note {
+  color: var(--fg-dim);
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+}
+
+/* indicador de progreso 01-04 */
+.step-dots {
+  position: absolute;
+  right: 5vw;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  z-index: 2;
+  transition: opacity 0.4s var(--ease);
+}
+
+.step-dots .dot {
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  color: var(--fg-dim);
+  font-variant-numeric: tabular-nums;
+  opacity: 0.5;
+  transition: opacity 0.3s var(--ease), color 0.3s var(--ease);
+}
+
+.step-dots .dot.active {
+  opacity: 1;
+  color: var(--accent);
+}
+
+/* texto de cada paso del recorrido */
+.step-caption {
+  justify-content: center;
+}
+
+.step-number {
+  color: var(--accent);
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.step-caption h2 {
+  font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+  color: var(--fg);
+  margin-bottom: 16px;
+}
+
+.step-caption p {
+  color: var(--fg-dim);
+  font-size: 1rem;
+  line-height: 1.65;
+  margin-bottom: 20px;
+}
+
+.page-tag {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  border: 1px solid rgba(34, 48, 74, 0.15);
+  border-radius: 12px;
+  background: rgba(34, 48, 74, 0.04);
+  max-width: 320px;
+}
+
+.page-tag strong {
+  color: var(--fg);
+  font-size: 0.92rem;
+}
+
+.page-tag span {
+  color: var(--fg-dim);
+  font-size: 0.8rem;
+}
+
+/* La Edición */
+.edicion-overlay {
+  justify-content: center;
+}
+
+.edicion-overlay h2 {
+  font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+  color: var(--fg);
+  margin-bottom: 22px;
+}
+
+.swatches {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.swatch {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid rgba(34, 48, 74, 0.25);
+  cursor: pointer;
+  transition: transform 0.25s var(--ease), border-color 0.25s var(--ease);
+  padding: 0;
+}
+
+.swatch.active {
+  border-color: var(--fg);
+  transform: scale(1.14);
+}
+
+.edition-label {
+  color: var(--fg);
+  font-size: 0.9rem;
+  margin-bottom: 18px;
+}
+
+.edition-number {
+  color: var(--fg-dim);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 760px) {
+  .journey-overlay {
+    padding: 0 6vw;
+    max-width: 100%;
+  }
+
+  .step-dots {
+    right: 4vw;
+  }
+}

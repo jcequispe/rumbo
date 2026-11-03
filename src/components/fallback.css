@@ -1,0 +1,426 @@
+.fallback {
+  width: 100%;
+}
+
+.fallback-hero {
+  padding: 120px 7vw 90px;
+  max-width: 620px;
+}
+
+.fallback-hero h1 {
+  font-size: clamp(2rem, 7vw, 2.8rem);
+  margin-bottom: 20px;
+}
+
+.fallback-hero .subtitle {
+  color: var(--fg-dim);
+  font-size: 1.02rem;
+  line-height: 1.65;
+  margin-bottom: 26px;
+}
+
+/* Experiencia cinematográfica: portada (hero) + "Qué hay adentro" en un
+   único track pineado — un solo video, sin cortes entre ambos. El wrap
+   da el alto total en scroll (ver TOTAL_UNITS en Experience.tsx), el pin
+   es la caja de 100vh que GSAP fija en pantalla mientras se scrollea. */
+.cine-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.cine-pin {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.cine-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* video ilustrado (stick-figure) en tonos crema -- el scrim es un degradé
+   suave del mismo crema del fondo, no un velo oscuro, para no ensuciar el
+   estilo flat/línea del dibujo. */
+.cine-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(242, 233, 228, 0.9) 0%,
+    rgba(242, 233, 228, 0.5) 30%,
+    rgba(242, 233, 228, 0.08) 55%,
+    rgba(242, 233, 228, 0.35) 100%
+  );
+  pointer-events: none;
+}
+
+.cine-hud {
+  position: absolute;
+  top: 96px;
+  left: 7vw;
+  z-index: 2;
+}
+
+.cine-kicker {
+  display: block;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-cool);
+  margin-bottom: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.cine-progress {
+  width: 160px;
+  height: 3px;
+  border-radius: 100px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.cine-progress span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.25s var(--ease);
+}
+
+.cine-slides {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 7vw 11vh;
+  max-width: 720px;
+}
+
+/* Tarjeta de fondo detrás del texto: el dibujo (mesa, trazos) cambia de
+   posición en cada paso/edición y puede cruzar justo donde cae el texto —
+   en vez de reubicar el texto paso a paso (fragil, depende del video), le
+   damos su propio fondo para que siempre quede legible sin importar qué
+   haya detrás. */
+.cine-slide {
+  position: absolute;
+  left: 7vw;
+  bottom: 11vh;
+  width: fit-content;
+  max-width: min(560px, calc(100% - 14vw));
+  padding: 22px 28px;
+  border-radius: 18px;
+  background: rgba(242, 233, 228, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 10px 32px rgba(34, 48, 74, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s var(--ease);
+}
+
+.cine-slide.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cine-slide-num {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 1.1rem;
+  color: var(--accent-cool);
+  margin-bottom: 10px;
+}
+
+.cine-slide-dot {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-bottom: 14px;
+  border: 1px solid rgba(34, 48, 74, 0.14);
+}
+
+.cine-slide h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+  margin: 0 0 14px;
+  color: var(--fg);
+}
+
+.cine-slide p {
+  color: var(--fg-dim);
+  line-height: 1.6;
+  font-size: 1.02rem;
+}
+
+@media (max-width: 767px) {
+  .cine-wrap {
+    height: auto !important;
+  }
+
+  .cine-pin {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: var(--bg);
+  }
+
+  .cine-video {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+  }
+
+  .cine-scrim,
+  .cine-hud {
+    display: none;
+  }
+
+  .cine-slides {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    padding: 56px 7vw;
+    max-width: none;
+  }
+
+  .cine-slide {
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+    width: auto;
+    max-width: none;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.edicion-lead {
+  padding: 90px 7vw 0;
+  max-width: 560px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.edicion-lead h2 {
+  font-size: 1.9rem;
+  margin-bottom: 14px;
+}
+
+.edicion-subheading {
+  color: var(--fg-dim);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.fallback-edicion-list {
+  padding: 56px 7vw 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* lista compacta de ediciones con cantidad */
+.ed-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 680px;
+  border-top: 1px solid rgba(34, 48, 74, 0.1);
+  margin-bottom: 36px;
+  text-align: left;
+}
+
+.ed-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 4px;
+  border-bottom: 1px solid rgba(34, 48, 74, 0.1);
+  transition: background 0.2s var(--ease);
+}
+
+.ed-row.active {
+  background: rgba(34, 48, 74, 0.04);
+}
+
+.ed-row-main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  min-width: 0;
+}
+
+.ed-row-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(34, 48, 74, 0.1);
+}
+
+.ed-row-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.ed-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--fg);
+}
+
+.ed-desc {
+  font-size: 0.8rem;
+  color: var(--fg-faint);
+  margin-top: 2px;
+}
+
+.ed-qty {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.ed-qty button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(34, 48, 74, 0.25);
+  background: transparent;
+  color: var(--fg);
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease);
+}
+
+.ed-qty button:hover:not(:disabled) {
+  border-color: var(--accent-blue-ink);
+  color: var(--accent-blue-ink);
+}
+
+.ed-qty button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.ed-qty span {
+  font-size: 0.9rem;
+  min-width: 14px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* carrito: acumula lo elegido en cada tarjeta, un solo pedido al final */
+.ed-cart {
+  width: 100%;
+  max-width: 920px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  border: 1px solid rgba(34, 48, 74, 0.12);
+  border-radius: 10px;
+  transition: border-color 0.25s var(--ease);
+  text-align: left;
+}
+
+.ed-cart.has-items {
+  border-color: var(--accent);
+}
+
+.ed-cart-summary {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ed-cart-empty {
+  font-size: 0.85rem;
+  color: var(--fg-faint);
+}
+
+.ed-cart-chip {
+  font-size: 0.8rem;
+  color: var(--fg);
+  background: rgba(34, 48, 74, 0.06);
+  border: 1px solid rgba(34, 48, 74, 0.14);
+  border-radius: 100px;
+  padding: 5px 12px;
+  white-space: nowrap;
+}
+
+.ed-cart-total {
+  font-size: 0.8rem;
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+
+.ed-cart-cta {
+  flex-shrink: 0;
+  padding: 13px 28px;
+  border-radius: 100px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.2s var(--ease), opacity 0.2s var(--ease);
+}
+
+.ed-cart-cta:hover {
+  background: var(--accent-soft);
+}
+
+.ed-cart-cta[aria-disabled='true'] {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+@media (max-width: 760px) {
+  .ed-row {
+    flex-wrap: wrap;
+  }
+
+  .ed-cart {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ed-cart-cta {
+    text-align: center;
+  }
+}
