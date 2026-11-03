@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { CLOSING, FOR_WHOM, TESTIMONIALS, waLink } from '../content'
+import { CLOSING, FOR_WHOM, TESTIMONIALS } from '../content'
 import { Reveal, Stagger, StaggerItem } from './Reveal'
 import './sections.css'
 
@@ -77,13 +77,14 @@ export function ForWhom() {
 }
 
 export function Closing() {
+  // Sin botón propio a propósito: el nav y la barra fija de abajo ya
+  // llevan al carrito en #edicion — un tercer botón amarillo acá era
+  // redundante y, peor, abría WhatsApp directo saltándose la elección
+  // de color/cantidad (inconsistente con esos otros dos).
   return (
     <section className="section closing-section" id="cierre">
       <Reveal>
         <p className="lead">{CLOSING.text}</p>
-        <a className="cta cta-primary" href={waLink('Hola, quiero mi Rumbo')} target="_blank" rel="noreferrer">
-          {CLOSING.cta}
-        </a>
       </Reveal>
     </section>
   )
