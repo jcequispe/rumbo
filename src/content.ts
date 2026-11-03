@@ -169,5 +169,4 @@ export const FOR_WHOM = {
 export const CLOSING = {
   text: 'Te escribo yo mismo para confirmar los detalles de tu edición. Respondo personalmente en menos de 2 horas.',
   guarantee: 'Garantía de 30 días.',
-  cta: 'Pedir por WhatsApp',
 }
