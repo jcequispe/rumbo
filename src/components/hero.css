@@ -42,7 +42,7 @@
   border-color: var(--fg);
 }
 
-@media (max-width: 767px) {
+@media (prefers-reduced-motion: reduce) {
   .hero-content {
     position: static;
     height: auto;
