@@ -7,7 +7,10 @@ import {
   EDITIONS,
   HERO,
   HERO_VIDEO_FRACTION,
+  MOBILE_HERO_END_S,
+  MOBILE_STEPS_END_S,
   MOBILE_VIDEO_SRC,
+  MOBILE_WALK_END_S,
   STEPS,
   STEPS_END_FRACTION,
   WALK_END_FRACTION,
@@ -90,13 +93,15 @@ export default function Experience() {
     const mm = gsap.matchMedia()
 
     // Decide qué fase corresponde a un progreso 0..1 y actualiza
-    // texto/HUD. Compartido por desktop (progreso = scroll) y mobile
-    // (progreso = currentTime/duration del video) — el CONTENIDO siempre
-    // tiene que corresponder a lo que se está mostrando, cambie lo que
-    // cambie cómo se llega a ese progreso.
-    const applyPhase = (p: number) => {
-      if (p < HERO_UNIT_END) {
-        const heroProgress = p / HERO_UNIT_END
+    // texto/HUD. Compartido por desktop (progreso = scroll, límites =
+    // HERO_UNIT_END/STEPS_UNIT_END/WALK_UNIT_END, unidades iguales) y
+    // mobile (progreso = currentTime/duration, límites calculados con
+    // tiempo de lectura real — cada paso dura lo que toma leerlo, no un
+    // noveno igual del total). El CONTENIDO siempre corresponde a lo que
+    // se muestra, cambie lo que cambie cómo se llega a ese progreso.
+    const applyPhase = (p: number, heroEnd: number, stepsEnd: number, walkEnd: number) => {
+      if (p < heroEnd) {
+        const heroProgress = p / heroEnd
         gsap.set(heroContentRef.current, {
           opacity: 1 - heroProgress,
           scale: 1 - 0.08 * heroProgress,
@@ -107,21 +112,21 @@ export default function Experience() {
         gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
         setActiveStep(-1)
         setActiveEditionIndex(-1)
-      } else if (p < STEPS_UNIT_END) {
-        const stepsProgress = (p - HERO_UNIT_END) / (STEPS_UNIT_END - HERO_UNIT_END)
+      } else if (p < stepsEnd) {
+        const stepsProgress = (p - heroEnd) / (stepsEnd - heroEnd)
         gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
         gsap.set(stepsHudRef.current, { opacity: 1, pointerEvents: 'auto' })
         gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
         setActiveStep(indexForProgress(STEP_BOUNDARIES, stepsProgress))
         setActiveEditionIndex(-1)
-      } else if (p < WALK_UNIT_END) {
+      } else if (p < walkEnd) {
         gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
         gsap.set(stepsHudRef.current, { opacity: 0, pointerEvents: 'none' })
         gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
         setActiveStep(-1)
         setActiveEditionIndex(-1)
       } else {
-        const editionsProgress = (p - WALK_UNIT_END) / (1 - WALK_UNIT_END)
+        const editionsProgress = (p - walkEnd) / (1 - walkEnd)
         gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
         gsap.set(stepsHudRef.current, { opacity: 0, pointerEvents: 'none' })
         gsap.set(editionsHudRef.current, { opacity: 1, pointerEvents: 'auto' })
@@ -137,7 +142,7 @@ export default function Experience() {
       const video = videoRef.current
 
       const applyFrame = (p: number) => {
-        applyPhase(p)
+        applyPhase(p, HERO_UNIT_END, STEPS_UNIT_END, WALK_UNIT_END)
         const duration = video?.duration
         if (!video || !duration) return
 
@@ -193,15 +198,31 @@ export default function Experience() {
 
       video.loop = true
       video.play?.().catch(() => {})
-      applyPhase(0)
+
+      // Límites en fracción 0..1, calculados sobre la duración REAL del
+      // video (no hardcodeada) a partir de los cortes en segundos — cada
+      // paso ocupa lo que toma leerlo, no un noveno igual del total.
+      const mobileBounds = (duration: number) => ({
+        heroEnd: MOBILE_HERO_END_S / duration,
+        stepsEnd: MOBILE_STEPS_END_S / duration,
+        walkEnd: MOBILE_WALK_END_S / duration,
+      })
+
+      if (video.duration) {
+        const b = mobileBounds(video.duration)
+        applyPhase(0, b.heroEnd, b.stepsEnd, b.walkEnd)
+      }
 
       // El evento "timeupdate" del video dispara muy pocas veces por
       // segundo (sobre todo en mobile) — con la fase de portada durando
-      // ~1s eso se sentía como un retraso de varios segundos en vez de
+      // solo unos segundos eso se sentía como un retraso largo en vez de
       // una transición. requestAnimationFrame lee currentTime a la
       // frecuencia real de pantalla, sin ese retraso.
       let raf = requestAnimationFrame(function tick() {
-        if (video.duration) applyPhase(video.currentTime / video.duration)
+        if (video.duration) {
+          const b = mobileBounds(video.duration)
+          applyPhase(video.currentTime / video.duration, b.heroEnd, b.stepsEnd, b.walkEnd)
+        }
         raf = requestAnimationFrame(tick)
       })
 
