@@ -19,13 +19,17 @@ export const HERO_VIDEO_FRACTION = 0.053322 // 0 .. acá = portada
 export const STEPS_END_FRACTION = 0.355477 // acá = fin de "qué hay adentro"
 export const WALK_END_FRACTION = 0.648295 // acá = fin de la caminata, empiezan las ediciones
 
-// Mobile usa un video DISTINTO (vertical 9:16, generado para celular — un
-// solo plano continuo de 10s: estresado → calma escribiendo → caminata →
-// presenta cuaderno) en vez de recortar/croppear el video horizontal de
-// desktop. Al ser un solo plano sin cortes internos, en mobile el
-// currentTime se mapea directo y proporcional al progreso del scroll
-// (0..1), sin las fracciones de arriba (esas son solo para combined.mp4).
+// Mobile usa un video DISTINTO (vertical 9:16, generado para celular),
+// de ~49.7s en vez de 10s — calculado con tiempo de lectura real (180
+// palabras/min + piso de 1.8s por tarjeta): con solo 10s era IMPOSIBLE
+// leer los 4 pasos completos sin apurar nada. 6 escenas separadas,
+// unidas con ffmpeg, cada una con la duración exacta que toma leer su
+// texto. El video corre SOLO como película (sin scroll-jacking), el
+// texto cambia en sintonía con el TIEMPO real del video.
 export const MOBILE_VIDEO_SRC = `${import.meta.env.BASE_URL}video/mobile-hero.mp4`
+export const MOBILE_HERO_END_S = 4.0 // 0..4s = portada
+export const MOBILE_STEPS_END_S = 39.6667 // 4..39.67s = los 4 pasos (duración = tiempo de lectura de cada uno)
+export const MOBILE_WALK_END_S = 42.6667 // 39.67..42.67s = caminata, después empiezan las ediciones
 
 export const HERO = {
   eyebrow: '',
