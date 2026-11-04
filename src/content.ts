@@ -27,6 +27,12 @@ export const WALK_END_FRACTION = 0.648295 // acá = fin de la caminata, empiezan
 // (0..1), sin las fracciones de arriba (esas son solo para combined.mp4).
 export const MOBILE_VIDEO_SRC = `${import.meta.env.BASE_URL}video/mobile-hero.mp4`
 
+// Loop ambiental instrumental (sin voz, generado — pad suave + textura de
+// ruido rosa) para toda la experiencia. Nunca autoplay: los navegadores
+// lo bloquean igual, y además es mejor dejar que el usuario decida. Ver
+// SoundToggle.tsx — apagado por defecto, el usuario lo activa con un toque.
+export const AMBIENT_AUDIO_SRC = `${import.meta.env.BASE_URL}audio/ambient-loop.mp3`
+
 export const HERO = {
   eyebrow: '',
   title: 'No necesitas otra app. Necesitas esto.',
