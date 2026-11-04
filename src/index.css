@@ -31,6 +31,11 @@
 
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --duration: 0.7s;
+
+  /* Alto real de la barra fija "Pedir ahora" en mobile (ver .whatsapp-bar
+     en sections.css) — cualquier contenido que pueda terminar pegado al
+     borde inferior en mobile debe descontar esto para no quedar tapado. */
+  --mobile-bar-h: 48px;
 }
 
 html,

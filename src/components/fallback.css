@@ -134,7 +134,9 @@
    (ahora un clip propio para celular) se siga viendo y sintiendo. */
 @media (max-width: 767px) {
   .cine-slide {
-    bottom: 6vh;
+    /* +var(--mobile-bar-h): la barra fija "Pedir ahora" tapaba el final
+       de la tarjeta (incluido el texto) en los 4 pasos y ediciones. */
+    bottom: calc(6vh + var(--mobile-bar-h));
     max-width: calc(100% - 12vw);
     padding: 14px 18px;
     border-radius: 14px;
