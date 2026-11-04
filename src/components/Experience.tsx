@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import {
   COMBINED_VIDEO_SRC,
   EDITION,
@@ -89,73 +89,71 @@ export default function Experience() {
   useLayoutEffect(() => {
     const mm = gsap.matchMedia()
 
-    // Pin + scrub a pantalla completa en TODOS los anchos (incluido mobile):
-    // es una sola cámara, de principio a fin, no una lista de clips. Solo
-    // se desactiva con prefers-reduced-motion (accesibilidad, no tamaño de
-    // pantalla).
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
+    // Decide qué fase corresponde a un progreso 0..1 y actualiza
+    // texto/HUD. Compartido por desktop (progreso = scroll) y mobile
+    // (progreso = currentTime/duration del video) — el CONTENIDO siempre
+    // tiene que corresponder a lo que se está mostrando, cambie lo que
+    // cambie cómo se llega a ese progreso.
+    const applyPhase = (p: number) => {
+      if (p < HERO_UNIT_END) {
+        const heroProgress = p / HERO_UNIT_END
+        gsap.set(heroContentRef.current, {
+          opacity: 1 - heroProgress,
+          scale: 1 - 0.08 * heroProgress,
+          y: -70 * heroProgress,
+          pointerEvents: heroProgress > 0.9 ? 'none' : 'auto',
+        })
+        gsap.set(stepsHudRef.current, { opacity: 0, pointerEvents: 'none' })
+        gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
+        setActiveStep(-1)
+        setActiveEditionIndex(-1)
+      } else if (p < STEPS_UNIT_END) {
+        const stepsProgress = (p - HERO_UNIT_END) / (STEPS_UNIT_END - HERO_UNIT_END)
+        gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
+        gsap.set(stepsHudRef.current, { opacity: 1, pointerEvents: 'auto' })
+        gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
+        setActiveStep(indexForProgress(STEP_BOUNDARIES, stepsProgress))
+        setActiveEditionIndex(-1)
+      } else if (p < WALK_UNIT_END) {
+        gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
+        gsap.set(stepsHudRef.current, { opacity: 0, pointerEvents: 'none' })
+        gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
+        setActiveStep(-1)
+        setActiveEditionIndex(-1)
+      } else {
+        const editionsProgress = (p - WALK_UNIT_END) / (1 - WALK_UNIT_END)
+        gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
+        gsap.set(stepsHudRef.current, { opacity: 0, pointerEvents: 'none' })
+        gsap.set(editionsHudRef.current, { opacity: 1, pointerEvents: 'auto' })
+        setActiveStep(-1)
+        setActiveEditionIndex(indexForProgress(EDITION_BOUNDARIES, editionsProgress))
+      }
+    }
+
+    // Desktop: pin + scrub fino sobre combined.mp4 — el usuario controla
+    // el avance con el scroll, cuadro a cuadro.
+    mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
       const cleanups: Array<() => void> = []
       const video = videoRef.current
-      // Probamos dejar el video de mobile corriendo libre (loop, sin
-      // scrubbing) para que se sintiera más fluido, pero eso desincroniza
-      // el video del texto — el HUD puede decir "Edición 03" mientras el
-      // video muestra la portada. El contenido SIEMPRE debe corresponder
-      // al texto, así que mobile vuelve a scrubbing sincronizado al
-      // scroll; la fluidez la da el reencode con keyframes densos
-      // (mobile-hero.mp4 / combined.mp4), no el desacople.
-      const isMobile = window.matchMedia('(max-width: 767px)').matches
 
-      // La visibilidad de cada fase se decide siempre (no depende de que
-      // el video ya haya cargado) — solo el currentTime del video espera
-      // a tener duration, para no desincronizarse una vez cargue.
       const applyFrame = (p: number) => {
+        applyPhase(p)
         const duration = video?.duration
-        const setVideoTime = (desktopFraction: number) => {
-          if (!video || !duration) return
-          // En mobile el video es un plano único continuo (ver
-          // MOBILE_VIDEO_SRC), así que el progreso total del scroll (p)
-          // mapea directo a su currentTime, sin las fracciones afinadas
-          // para combined.mp4 (desktopFraction).
-          video.currentTime = (isMobile ? p : desktopFraction) * duration
-        }
+        if (!video || !duration) return
 
         if (p < HERO_UNIT_END) {
-          const heroProgress = p / HERO_UNIT_END
-          gsap.set(heroContentRef.current, {
-            opacity: 1 - heroProgress,
-            scale: 1 - 0.08 * heroProgress,
-            y: -70 * heroProgress,
-            pointerEvents: heroProgress > 0.9 ? 'none' : 'auto',
-          })
-          gsap.set(stepsHudRef.current, { opacity: 0, pointerEvents: 'none' })
-          gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
-          setActiveStep(-1)
-          setActiveEditionIndex(-1)
-          setVideoTime(heroProgress * HERO_VIDEO_FRACTION)
+          video.currentTime = (p / HERO_UNIT_END) * HERO_VIDEO_FRACTION * duration
         } else if (p < STEPS_UNIT_END) {
           const stepsProgress = (p - HERO_UNIT_END) / (STEPS_UNIT_END - HERO_UNIT_END)
-          gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
-          gsap.set(stepsHudRef.current, { opacity: 1, pointerEvents: 'auto' })
-          gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
-          setActiveStep(indexForProgress(STEP_BOUNDARIES, stepsProgress))
-          setActiveEditionIndex(-1)
-          setVideoTime(HERO_VIDEO_FRACTION + stepsProgress * (STEPS_END_FRACTION - HERO_VIDEO_FRACTION))
+          video.currentTime =
+            (HERO_VIDEO_FRACTION + stepsProgress * (STEPS_END_FRACTION - HERO_VIDEO_FRACTION)) * duration
         } else if (p < WALK_UNIT_END) {
           const walkProgress = (p - STEPS_UNIT_END) / (WALK_UNIT_END - STEPS_UNIT_END)
-          gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
-          gsap.set(stepsHudRef.current, { opacity: 0, pointerEvents: 'none' })
-          gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
-          setActiveStep(-1)
-          setActiveEditionIndex(-1)
-          setVideoTime(STEPS_END_FRACTION + walkProgress * (WALK_END_FRACTION - STEPS_END_FRACTION))
+          video.currentTime =
+            (STEPS_END_FRACTION + walkProgress * (WALK_END_FRACTION - STEPS_END_FRACTION)) * duration
         } else {
           const editionsProgress = (p - WALK_UNIT_END) / (1 - WALK_UNIT_END)
-          gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
-          gsap.set(stepsHudRef.current, { opacity: 0, pointerEvents: 'none' })
-          gsap.set(editionsHudRef.current, { opacity: 1, pointerEvents: 'auto' })
-          setActiveStep(-1)
-          setActiveEditionIndex(indexForProgress(EDITION_BOUNDARIES, editionsProgress))
-          setVideoTime(WALK_END_FRACTION + editionsProgress * (1 - WALK_END_FRACTION))
+          video.currentTime = (WALK_END_FRACTION + editionsProgress * (1 - WALK_END_FRACTION)) * duration
         }
       }
 
@@ -165,11 +163,7 @@ export default function Experience() {
           start: 'top top',
           end: 'bottom bottom',
           pin: pinRef.current,
-          // En mobile un scrub numérico (con lerp) le da al avance un
-          // ligerísimo "alcance" en vez de seguir el dedo 1:1 — más
-          // cinematográfico, sin dejar de ser el usuario quien controla
-          // el scroll. En desktop (ya "perfecto") no se toca: scrub: true.
-          scrub: isMobile ? 0.35 : true,
+          scrub: true,
           onUpdate: (self) => applyFrame(self.progress),
         })
         applyFrame(masterTrigger.progress)
@@ -185,16 +179,36 @@ export default function Experience() {
       return () => cleanups.forEach((fn) => fn())
     })
 
-    // Reduced-motion: sin pin ni scroll-jacking — el video de portada es
-    // un banner en loop acotado solo a SU tramo, todo el contenido queda
-    // apilado y estático.
+    // Mobile: nada de scroll-jacking — "esto de 3D y scroll no va bien en
+    // móviles". El video corre solo, de principio a fin, como una
+    // película (mobile-hero.mp4, un solo plano continuo); el texto/HUD
+    // cambia en sintonía con el TIEMPO del video (timeupdate), no con el
+    // scroll. El usuario solo mira y, cuando quiere, sigue bajando la
+    // página normal hacia "La Edición" y el resto — el bloque del video
+    // mide una sola pantalla (ver fallback.css), no 9 unidades.
+    mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
+      gsap.set(heroContentRef.current, { clearProps: 'all' })
+      const video = videoRef.current
+      if (!video) return
+
+      video.loop = true
+      const onTimeUpdate = () => {
+        if (video.duration) applyPhase(video.currentTime / video.duration)
+      }
+      video.addEventListener('timeupdate', onTimeUpdate)
+      video.play?.().catch(() => {})
+      applyPhase(0)
+
+      return () => video.removeEventListener('timeupdate', onTimeUpdate)
+    })
+
+    // Reduced-motion: sin autoplay forzado ni texto cambiando solo — el
+    // video de portada es un banner en loop acotado solo a SU tramo, todo
+    // el contenido queda apilado y estático (accesibilidad).
     mm.add('(prefers-reduced-motion: reduce)', () => {
       gsap.set(heroContentRef.current, { clearProps: 'all' })
       const video = videoRef.current
       if (!video) return
-      // En mobile el video YA es un solo plano corto (ver MOBILE_VIDEO_SRC):
-      // se loopea completo. En desktop sigue siendo combined.mp4, así que
-      // el loop se acota solo a la portada (HERO_VIDEO_FRACTION).
       const isMobile = window.matchMedia('(max-width: 767px)').matches
 
       const onLoaded = () => {
@@ -221,7 +235,12 @@ export default function Experience() {
 
   return (
     <>
-      <section ref={wrapRef} className="cine-wrap" style={{ height: `${TOTAL_UNITS * 100}vh` }} id="hero">
+      <section
+        ref={wrapRef}
+        className="cine-wrap"
+        style={{ '--cine-wrap-height': `${TOTAL_UNITS * 100}vh` } as CSSProperties}
+        id="hero"
+      >
         <span id="recorrido" className="journey-anchor" style={{ top: `${HERO_UNIT_END * 100}%` }} aria-hidden="true" />
         <span id="edicion" className="journey-anchor" style={{ top: `${WALK_UNIT_END * 100}%` }} aria-hidden="true" />
 

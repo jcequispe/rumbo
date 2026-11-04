@@ -26,6 +26,7 @@
 .cine-wrap {
   position: relative;
   width: 100%;
+  height: var(--cine-wrap-height);
 }
 
 .cine-pin {
@@ -129,10 +130,21 @@
   pointer-events: auto;
 }
 
-/* En mobile la tarjeta tapaba demasiado video — acá queda más chica,
-   más translúcida y más pegada al borde inferior, para que el video
-   (ahora un clip propio para celular) se siga viendo y sintiendo. */
+/* Mobile: sin pin ni scroll de 9 pantallas — el video corre solo, como
+   película, en un solo bloque de una pantalla (ver Experience.tsx: el
+   texto cambia con el TIEMPO del video, no con el scroll). El resto de
+   la página sigue debajo en flujo normal. La tarjeta de texto además
+   quedaba muy grande/opaca tapando el video — acá va más chica, más
+   translúcida y pegada al borde inferior. */
 @media (max-width: 767px) {
+  .cine-wrap {
+    height: 100dvh !important;
+  }
+
+  .cine-pin {
+    height: 100dvh;
+  }
+
   .cine-slide {
     /* +var(--mobile-bar-h): la barra fija "Pedir ahora" tapaba el final
        de la tarjeta (incluido el texto) en los 4 pasos y ediciones. */
