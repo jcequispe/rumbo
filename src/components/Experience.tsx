@@ -165,7 +165,11 @@ export default function Experience() {
           start: 'top top',
           end: 'bottom bottom',
           pin: pinRef.current,
-          scrub: true,
+          // En mobile un scrub numérico (con lerp) le da al avance un
+          // ligerísimo "alcance" en vez de seguir el dedo 1:1 — más
+          // cinematográfico, sin dejar de ser el usuario quien controla
+          // el scroll. En desktop (ya "perfecto") no se toca: scrub: true.
+          scrub: isMobile ? 0.35 : true,
           onUpdate: (self) => applyFrame(self.progress),
         })
         applyFrame(masterTrigger.progress)
