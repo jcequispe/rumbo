@@ -19,6 +19,14 @@ export const HERO_VIDEO_FRACTION = 0.053322 // 0 .. acá = portada
 export const STEPS_END_FRACTION = 0.355477 // acá = fin de "qué hay adentro"
 export const WALK_END_FRACTION = 0.648295 // acá = fin de la caminata, empiezan las ediciones
 
+// Mobile usa un video DISTINTO (vertical 9:16, generado para celular — un
+// solo plano continuo de 10s: estresado → calma escribiendo → caminata →
+// presenta cuaderno) en vez de recortar/croppear el video horizontal de
+// desktop. Al ser un solo plano sin cortes internos, en mobile el
+// currentTime se mapea directo y proporcional al progreso del scroll
+// (0..1), sin las fracciones de arriba (esas son solo para combined.mp4).
+export const MOBILE_VIDEO_SRC = `${import.meta.env.BASE_URL}video/mobile-hero.mp4`
+
 export const HERO = {
   eyebrow: '',
   title: 'No necesitas otra app. Necesitas esto.',

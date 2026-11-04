@@ -7,6 +7,7 @@ import {
   EDITIONS,
   HERO,
   HERO_VIDEO_FRACTION,
+  MOBILE_VIDEO_SRC,
   STEPS,
   STEPS_END_FRACTION,
   WALK_END_FRACTION,
@@ -95,12 +96,22 @@ export default function Experience() {
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       const cleanups: Array<() => void> = []
       const video = videoRef.current
+      // En mobile el video es un plano único continuo (ver MOBILE_VIDEO_SRC
+      // en content.ts), no el mismo combined.mp4 recortado por CSS — así
+      // que ahí el currentTime se mapea directo y proporcional al progreso
+      // total del scroll (0..1), en vez de las fracciones de combined.mp4
+      // (HERO_VIDEO_FRACTION etc.), que no aplican a ese archivo.
+      const isMobile = window.matchMedia('(max-width: 767px)').matches
 
       // La visibilidad de cada fase se decide siempre (no depende de que
       // el video ya haya cargado) — solo el currentTime del video espera
       // a tener duration, para no desincronizarse una vez cargue.
       const applyFrame = (p: number) => {
         const duration = video?.duration
+        const setVideoTime = (desktopFraction: number) => {
+          if (!video || !duration) return
+          video.currentTime = (isMobile ? p : desktopFraction) * duration
+        }
 
         if (p < HERO_UNIT_END) {
           const heroProgress = p / HERO_UNIT_END
@@ -114,7 +125,7 @@ export default function Experience() {
           gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
           setActiveStep(-1)
           setActiveEditionIndex(-1)
-          if (video && duration) video.currentTime = heroProgress * HERO_VIDEO_FRACTION * duration
+          setVideoTime(heroProgress * HERO_VIDEO_FRACTION)
         } else if (p < STEPS_UNIT_END) {
           const stepsProgress = (p - HERO_UNIT_END) / (STEPS_UNIT_END - HERO_UNIT_END)
           gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
@@ -122,10 +133,7 @@ export default function Experience() {
           gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
           setActiveStep(indexForProgress(STEP_BOUNDARIES, stepsProgress))
           setActiveEditionIndex(-1)
-          if (video && duration) {
-            video.currentTime =
-              (HERO_VIDEO_FRACTION + stepsProgress * (STEPS_END_FRACTION - HERO_VIDEO_FRACTION)) * duration
-          }
+          setVideoTime(HERO_VIDEO_FRACTION + stepsProgress * (STEPS_END_FRACTION - HERO_VIDEO_FRACTION))
         } else if (p < WALK_UNIT_END) {
           const walkProgress = (p - STEPS_UNIT_END) / (WALK_UNIT_END - STEPS_UNIT_END)
           gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
@@ -133,10 +141,7 @@ export default function Experience() {
           gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
           setActiveStep(-1)
           setActiveEditionIndex(-1)
-          if (video && duration) {
-            video.currentTime =
-              (STEPS_END_FRACTION + walkProgress * (WALK_END_FRACTION - STEPS_END_FRACTION)) * duration
-          }
+          setVideoTime(STEPS_END_FRACTION + walkProgress * (WALK_END_FRACTION - STEPS_END_FRACTION))
         } else {
           const editionsProgress = (p - WALK_UNIT_END) / (1 - WALK_UNIT_END)
           gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
@@ -144,9 +149,7 @@ export default function Experience() {
           gsap.set(editionsHudRef.current, { opacity: 1, pointerEvents: 'auto' })
           setActiveStep(-1)
           setActiveEditionIndex(indexForProgress(EDITION_BOUNDARIES, editionsProgress))
-          if (video && duration) {
-            video.currentTime = (WALK_END_FRACTION + editionsProgress * (1 - WALK_END_FRACTION)) * duration
-          }
+          setVideoTime(WALK_END_FRACTION + editionsProgress * (1 - WALK_END_FRACTION))
         }
       }
 
@@ -179,12 +182,17 @@ export default function Experience() {
       gsap.set(heroContentRef.current, { clearProps: 'all' })
       const video = videoRef.current
       if (!video) return
+      // En mobile el video YA es un solo plano corto (ver MOBILE_VIDEO_SRC):
+      // se loopea completo. En desktop sigue siendo combined.mp4, así que
+      // el loop se acota solo a la portada (HERO_VIDEO_FRACTION).
+      const isMobile = window.matchMedia('(max-width: 767px)').matches
 
       const onLoaded = () => {
         if (video.duration) video.currentTime = 0
       }
       const onTimeUpdate = () => {
-        if (video.duration && video.currentTime >= HERO_VIDEO_FRACTION * video.duration - 0.05) {
+        const loopEnd = isMobile ? video.duration : HERO_VIDEO_FRACTION * video.duration
+        if (video.duration && video.currentTime >= loopEnd - 0.05) {
           video.currentTime = 0
         }
       }
@@ -209,7 +217,10 @@ export default function Experience() {
 
         <div ref={pinRef} className="cine-pin">
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <video ref={videoRef} className="cine-video" src={COMBINED_VIDEO_SRC} muted playsInline preload="auto" />
+          <video ref={videoRef} className="cine-video" muted playsInline preload="auto">
+            <source src={MOBILE_VIDEO_SRC} media="(max-width: 767px)" />
+            <source src={COMBINED_VIDEO_SRC} />
+          </video>
           <div className="cine-scrim" aria-hidden="true" />
 
           <div ref={heroContentRef} className="hero-content">
