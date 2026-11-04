@@ -96,17 +96,14 @@ export default function Experience() {
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       const cleanups: Array<() => void> = []
       const video = videoRef.current
-      // En mobile el scrubbing frame-a-frame se sentía "a saltos" incluso
-      // con el video liviano — en vez de clavar el currentTime a la
-      // posición del scroll, ahí el video corre SOLO en loop (como un
-      // video de verdad) y el scroll únicamente decide qué texto se ve
-      // encima. En desktop sigue siendo scrubbing fino sobre combined.mp4.
+      // Probamos dejar el video de mobile corriendo libre (loop, sin
+      // scrubbing) para que se sintiera más fluido, pero eso desincroniza
+      // el video del texto — el HUD puede decir "Edición 03" mientras el
+      // video muestra la portada. El contenido SIEMPRE debe corresponder
+      // al texto, así que mobile vuelve a scrubbing sincronizado al
+      // scroll; la fluidez la da el reencode con keyframes densos
+      // (mobile-hero.mp4 / combined.mp4), no el desacople.
       const isMobile = window.matchMedia('(max-width: 767px)').matches
-
-      if (isMobile && video) {
-        video.loop = true
-        video.play?.().catch(() => {})
-      }
 
       // La visibilidad de cada fase se decide siempre (no depende de que
       // el video ya haya cargado) — solo el currentTime del video espera
@@ -114,8 +111,12 @@ export default function Experience() {
       const applyFrame = (p: number) => {
         const duration = video?.duration
         const setVideoTime = (desktopFraction: number) => {
-          if (isMobile || !video || !duration) return
-          video.currentTime = desktopFraction * duration
+          if (!video || !duration) return
+          // En mobile el video es un plano único continuo (ver
+          // MOBILE_VIDEO_SRC), así que el progreso total del scroll (p)
+          // mapea directo a su currentTime, sin las fracciones afinadas
+          // para combined.mp4 (desktopFraction).
+          video.currentTime = (isMobile ? p : desktopFraction) * duration
         }
 
         if (p < HERO_UNIT_END) {
