@@ -96,12 +96,17 @@ export default function Experience() {
     mm.add('(prefers-reduced-motion: no-preference)', () => {
       const cleanups: Array<() => void> = []
       const video = videoRef.current
-      // En mobile el video es un plano único continuo (ver MOBILE_VIDEO_SRC
-      // en content.ts), no el mismo combined.mp4 recortado por CSS — así
-      // que ahí el currentTime se mapea directo y proporcional al progreso
-      // total del scroll (0..1), en vez de las fracciones de combined.mp4
-      // (HERO_VIDEO_FRACTION etc.), que no aplican a ese archivo.
+      // En mobile el scrubbing frame-a-frame se sentía "a saltos" incluso
+      // con el video liviano — en vez de clavar el currentTime a la
+      // posición del scroll, ahí el video corre SOLO en loop (como un
+      // video de verdad) y el scroll únicamente decide qué texto se ve
+      // encima. En desktop sigue siendo scrubbing fino sobre combined.mp4.
       const isMobile = window.matchMedia('(max-width: 767px)').matches
+
+      if (isMobile && video) {
+        video.loop = true
+        video.play?.().catch(() => {})
+      }
 
       // La visibilidad de cada fase se decide siempre (no depende de que
       // el video ya haya cargado) — solo el currentTime del video espera
@@ -109,8 +114,8 @@ export default function Experience() {
       const applyFrame = (p: number) => {
         const duration = video?.duration
         const setVideoTime = (desktopFraction: number) => {
-          if (!video || !duration) return
-          video.currentTime = (isMobile ? p : desktopFraction) * duration
+          if (isMobile || !video || !duration) return
+          video.currentTime = desktopFraction * duration
         }
 
         if (p < HERO_UNIT_END) {
