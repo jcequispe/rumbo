@@ -129,6 +129,41 @@
   pointer-events: auto;
 }
 
+/* En mobile la tarjeta tapaba demasiado video — acá queda más chica,
+   más translúcida y más pegada al borde inferior, para que el video
+   (ahora un clip propio para celular) se siga viendo y sintiendo. */
+@media (max-width: 767px) {
+  .cine-slide {
+    bottom: 6vh;
+    max-width: calc(100% - 12vw);
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: rgba(242, 233, 228, 0.68);
+    box-shadow: 0 6px 20px rgba(34, 48, 74, 0.08);
+  }
+
+  .cine-slide-num {
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+  }
+
+  .cine-slide-dot {
+    width: 16px;
+    height: 16px;
+    margin-bottom: 8px;
+  }
+
+  .cine-slide h3 {
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+  }
+
+  .cine-slide p {
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+}
+
 .cine-slide-num {
   display: block;
   font-family: var(--font-display);
