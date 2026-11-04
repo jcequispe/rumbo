@@ -182,24 +182,30 @@ export default function Experience() {
     // Mobile: nada de scroll-jacking — "esto de 3D y scroll no va bien en
     // móviles". El video corre solo, de principio a fin, como una
     // película (mobile-hero.mp4, un solo plano continuo); el texto/HUD
-    // cambia en sintonía con el TIEMPO del video (timeupdate), no con el
-    // scroll. El usuario solo mira y, cuando quiere, sigue bajando la
-    // página normal hacia "La Edición" y el resto — el bloque del video
-    // mide una sola pantalla (ver fallback.css), no 9 unidades.
+    // cambia en sintonía con el TIEMPO del video, no con el scroll. El
+    // usuario solo mira y, cuando quiere, sigue bajando la página normal
+    // hacia "La Edición" y el resto — el bloque del video mide una sola
+    // pantalla (ver fallback.css), no 9 unidades.
     mm.add('(max-width: 767px) and (prefers-reduced-motion: no-preference)', () => {
       gsap.set(heroContentRef.current, { clearProps: 'all' })
       const video = videoRef.current
       if (!video) return
 
       video.loop = true
-      const onTimeUpdate = () => {
-        if (video.duration) applyPhase(video.currentTime / video.duration)
-      }
-      video.addEventListener('timeupdate', onTimeUpdate)
       video.play?.().catch(() => {})
       applyPhase(0)
 
-      return () => video.removeEventListener('timeupdate', onTimeUpdate)
+      // El evento "timeupdate" del video dispara muy pocas veces por
+      // segundo (sobre todo en mobile) — con la fase de portada durando
+      // ~1s eso se sentía como un retraso de varios segundos en vez de
+      // una transición. requestAnimationFrame lee currentTime a la
+      // frecuencia real de pantalla, sin ese retraso.
+      let raf = requestAnimationFrame(function tick() {
+        if (video.duration) applyPhase(video.currentTime / video.duration)
+        raf = requestAnimationFrame(tick)
+      })
+
+      return () => cancelAnimationFrame(raf)
     })
 
     // Reduced-motion: sin autoplay forzado ni texto cambiando solo — el
