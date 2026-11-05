@@ -322,6 +322,15 @@
   text-align: center;
 }
 
+@media (max-width: 767px) {
+  /* 90px pensado para cuando este bloque quedaba debajo del video
+     pineado en desktop — en mobile, sumado al offset del scroll al
+     saltar con "Pedir", dejaba un colchón grande antes del título. */
+  .edicion-lead {
+    padding-top: 32px;
+  }
+}
+
 .edicion-lead h2 {
   font-size: 1.9rem;
   margin-bottom: 14px;

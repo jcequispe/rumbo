@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { CLOSING, FOR_WHOM, TESTIMONIALS } from '../content'
 import { Reveal, Stagger, StaggerItem } from './Reveal'
 import './sections.css'
@@ -93,8 +93,25 @@ export function Closing() {
 export function WhatsAppBar() {
   // mismo criterio que el nav: lleva al carrito en #edicion, no dispara
   // un WhatsApp genérico que se salta la elección de color/cantidad
+  const [hidden, setHidden] = useState(false)
+  const barRef = useRef<HTMLAnchorElement>(null)
+
+  useEffect(() => {
+    const target = document.getElementById('edicion')
+    if (!target) return
+
+    // Estando parado justo en "La Edición", esta barra repite lo mismo
+    // que el "Pedir" del nav — ocupa ~56px fijos de pantalla sin aportar
+    // nada. Se esconde solo mientras esa sección está a la vista.
+    const observer = new IntersectionObserver(([entry]) => setHidden(entry.isIntersecting), {
+      rootMargin: '-40% 0px -40% 0px',
+    })
+    observer.observe(target)
+    return () => observer.disconnect()
+  }, [])
+
   return (
-    <a className="whatsapp-bar" href="#edicion">
+    <a ref={barRef} className={hidden ? 'whatsapp-bar whatsapp-bar-hidden' : 'whatsapp-bar'} href="#edicion">
       Pedir ahora
     </a>
   )
