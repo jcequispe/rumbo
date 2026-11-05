@@ -34,7 +34,7 @@ export const MOBILE_WALK_END_S = 42.6667 // 39.67..42.67s = caminata, después e
 export const HERO = {
   eyebrow: '',
   title: 'No necesitas otra app. Necesitas esto.',
-  subtitle: 'Diez minutos al día y listo.',
+  subtitle: 'Diez minutos para soltar lo que tu cabeza no deja de cargar.',
   ctaPrimary: 'Elige tu edición',
   ctaSecondary: 'Ver qué hay adentro',
   price: PRICE_NOTE,
@@ -78,7 +78,7 @@ export const STEPS: Step[] = [
     id: 'revision',
     number: '04',
     title: 'Revisión',
-    copy: 'Domingo en la noche, antes de cerrar: respondes tres preguntas ya impresas y pasas a la semana que viene sabiendo qué ajustar, no solo repitiendo.',
+    copy: 'Domingo en la noche, antes de cerrar: respondes tres preguntas ya impresas y cierras la semana sabiendo qué ajustar, no solo repitiendo.',
     pageHeading: 'Revisión mensual',
     pageDetail: '3 preguntas impresas, con respuestas de ejemplo ya escritas',
   },
@@ -119,7 +119,7 @@ export const PACKAGING = {
 
 export const PAUSE = {
   eyebrow: 'Antes de seguir —',
-  text: 'Respira. Son diez minutos tuyos, cada día, los trescientos sesenta y cinco días del año. Nada más que eso — y es suficiente.',
+  text: 'Respira. Ya cerraste algo hoy, y eso cuenta. Son diez minutos tuyos, cada día, los trescientos sesenta y cinco días del año. Nada más que eso — y es suficiente.',
 }
 
 // Plantilla de demo — nombres ficticios y fotos de stock (randomuser.me, libres para mockups).
