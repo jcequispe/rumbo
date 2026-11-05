@@ -252,5 +252,15 @@
     font-weight: 600;
     font-size: 0.9rem;
     text-decoration: none;
+    transform: translateY(0);
+    transition: transform 0.3s var(--ease), opacity 0.3s var(--ease);
+  }
+
+  /* Parado justo en "La Edición" el "Pedir" del nav ya hace lo mismo —
+     repetirlo acá abajo solo roba pantalla sin aportar nada. */
+  .whatsapp-bar-hidden {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
   }
 }
