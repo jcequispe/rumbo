@@ -278,7 +278,6 @@ export default function Experience() {
         id="hero"
       >
         <span id="recorrido" className="journey-anchor" style={{ top: `${HERO_UNIT_END * 100}%` }} aria-hidden="true" />
-        <span id="edicion" className="journey-anchor" style={{ top: `${WALK_UNIT_END * 100}%` }} aria-hidden="true" />
 
         <div ref={pinRef} className="cine-pin">
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
@@ -352,7 +351,12 @@ export default function Experience() {
         </div>
       </section>
 
-      <div className="fallback-edicion-list">
+      {/* id="edicion" va acá, no dentro de .cine-wrap: antes vivía en un
+          span posicionado por % del alto del pin (900vh en desktop), que
+          en mobile (.cine-wrap colapsa a 100dvh) caía a mitad del video
+          en vez de en el carrito real. "Pedir"/"Pedir ahora" deben
+          llevar siempre aquí, donde se elige cantidad y se pide. */}
+      <div className="fallback-edicion-list" id="edicion">
         <div className="edicion-lead">
           <h2>{EDITION.heading}</h2>
           <p className="edicion-subheading">{EDITION.subheading}</p>
