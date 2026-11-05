@@ -11,6 +11,7 @@ import {
   MOBILE_STEPS_END_S,
   MOBILE_VIDEO_SRC,
   MOBILE_WALK_END_S,
+  PAUSE,
   STEPS,
   STEPS_END_FRACTION,
   WALK_END_FRACTION,
@@ -79,6 +80,7 @@ export default function Experience() {
   const heroContentRef = useRef<HTMLDivElement>(null)
   const stepsHudRef = useRef<HTMLDivElement>(null)
   const editionsHudRef = useRef<HTMLDivElement>(null)
+  const pauseRef = useRef<HTMLDivElement>(null)
 
   const changeQty = (name: EditionName, delta: number) =>
     setQty((q) => ({ ...q, [name]: Math.max(0, q[name] + delta) }))
@@ -110,6 +112,7 @@ export default function Experience() {
         })
         gsap.set(stepsHudRef.current, { opacity: 0, pointerEvents: 'none' })
         gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
+        gsap.set(pauseRef.current, { opacity: 0 })
         setActiveStep(-1)
         setActiveEditionIndex(-1)
       } else if (p < stepsEnd) {
@@ -117,12 +120,17 @@ export default function Experience() {
         gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
         gsap.set(stepsHudRef.current, { opacity: 1, pointerEvents: 'auto' })
         gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
+        gsap.set(pauseRef.current, { opacity: 0 })
         setActiveStep(indexForProgress(STEP_BOUNDARIES, stepsProgress))
         setActiveEditionIndex(-1)
       } else if (p < walkEnd) {
+        // La "caminata" del video no mostraba texto — es el único tramo
+        // libre entre los pasos y las ediciones, el lugar natural para
+        // una pausa antes de pedir una decisión de compra.
         gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
         gsap.set(stepsHudRef.current, { opacity: 0, pointerEvents: 'none' })
         gsap.set(editionsHudRef.current, { opacity: 0, pointerEvents: 'none' })
+        gsap.set(pauseRef.current, { opacity: 1 })
         setActiveStep(-1)
         setActiveEditionIndex(-1)
       } else {
@@ -130,6 +138,7 @@ export default function Experience() {
         gsap.set(heroContentRef.current, { opacity: 0, pointerEvents: 'none' })
         gsap.set(stepsHudRef.current, { opacity: 0, pointerEvents: 'none' })
         gsap.set(editionsHudRef.current, { opacity: 1, pointerEvents: 'auto' })
+        gsap.set(pauseRef.current, { opacity: 0 })
         setActiveStep(-1)
         setActiveEditionIndex(indexForProgress(EDITION_BOUNDARIES, editionsProgress))
       }
@@ -312,6 +321,13 @@ export default function Experience() {
                 <p>{s.copy}</p>
               </div>
             ))}
+          </div>
+
+          <div ref={pauseRef} className="cine-pause">
+            <span className="cine-pause-eyebrow" aria-hidden="true">
+              {PAUSE.eyebrow}
+            </span>
+            <p>{PAUSE.text}</p>
           </div>
 
           <div ref={editionsHudRef} className="cine-hud">
