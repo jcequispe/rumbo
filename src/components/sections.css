@@ -7,6 +7,12 @@
   text-align: center;
 }
 
+@media (max-width: 760px) {
+  .section {
+    padding: 64px 7vw;
+  }
+}
+
 .section-tight {
   min-height: 60vh;
   justify-content: center;
