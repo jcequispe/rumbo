@@ -117,9 +117,12 @@ export const PACKAGING = {
   text: 'Llega envuelta en papel, con un sello y una nota escrita a mano. Antes de abrir la agenda, ya empezaste el ritual.',
 }
 
+// Texto corto a propósito: en mobile este mensaje vive dentro de la
+// ventana de la caminata del video (~3s, ver MOBILE_WALK_END_S en
+// Experience.tsx) — no hay tiempo de leer un párrafo largo ahí.
 export const PAUSE = {
   eyebrow: 'Antes de seguir —',
-  text: 'Respira. Ya cerraste algo hoy, y eso cuenta. Son diez minutos tuyos, cada día, los trescientos sesenta y cinco días del año. Nada más que eso — y es suficiente.',
+  text: 'Respira. Ya cerraste algo hoy.',
 }
 
 // Plantilla de demo — nombres ficticios y fotos de stock (randomuser.me, libres para mockups).
