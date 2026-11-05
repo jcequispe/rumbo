@@ -341,6 +341,14 @@
   text-align: center;
 }
 
+@media (max-width: 767px) {
+  /* Antes: 110px acá + 100px de .section siguiente = +200px de vacío
+     entre el carrito y "¿Es para ti?", mucho en una pantalla chica. */
+  .fallback-edicion-list {
+    padding-bottom: 48px;
+  }
+}
+
 /* lista compacta de ediciones con cantidad */
 .ed-list {
   display: flex;
@@ -508,8 +516,12 @@
   background: var(--accent-soft);
 }
 
+/* Nada de opacity acá: a 0.35 el amarillo vivo se funde con el fondo
+   crema y el texto se vuelve ilegible — se ve roto, no "deshabilitado".
+   Un gris neutro sólido se lee claro como "todavía no" sin desaparecer. */
 .ed-cart-cta[aria-disabled='true'] {
-  opacity: 0.35;
+  background: rgba(34, 48, 74, 0.08);
+  color: var(--fg-faint);
   pointer-events: none;
 }
 
