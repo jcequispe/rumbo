@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<!-- Title and viewport meta -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Agenda Áurea</title>
+<!--
+  Barra de revisión interna — NO es parte del diseño final de ninguna
+  de las 3 propuestas. Deja elegir entre ellas desde cualquiera.
+-->
+<style>
+  body { padding-top: 32px !important; }
+  #variant-switcher {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2147483647;
+    height: 32px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #111;
+    color: #eee;
+    font-family: system-ui, sans-serif;
+    font-size: 12px;
+  }
+  #variant-switcher span { opacity: 0.7; }
+  #variant-switcher select {
+    background: #222;
+    color: #eee;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+</style>
+<style>
+  /*
+    Layout concept: a vertical "ledger" column (like a leather-bound
+    journal page) down the center, bordered by thin gold hairlines,
+    with wide margins that breathe like the blank space around a
+    hand-written plan. Sections are numbered entries, not cards.
+  */
+  :root {
+    --bg: #f6f0e1;
+    --surface: #efe4cb;
+    --sheen: #fffcf4;
+    --ink: #241a0f;
+    --ink-soft: #6b5c3f;
+    --gold: #b8863b;
+    --gold-deep: #8a5f1f;
+    --forest: #1f4a32;
+    --rule: #d9c69a;
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #f2e6c6;
+      --surface: #ebdab0;
+      --sheen: #fffcf3;
+      --ink: #241a0f;
+      --ink-soft: #6b5c3f;
+      --gold: #b8863b;
+      --gold-deep: #8a5f1f;
+      --forest: #1f4a32;
+      --rule: #ddc99a;
+      color-scheme: light;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #f2e6c6;
+    --surface: #ebdab0;
+    --sheen: #fffcf3;
+    --ink: #241a0f;
+    --ink-soft: #6b5c3f;
+    --gold: #b8863b;
+    --gold-deep: #8a5f1f;
+    --forest: #1f4a32;
+    --rule: #ddc99a;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    background-image: linear-gradient(165deg, var(--sheen) 0%, var(--bg) 42%, var(--surface) 100%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 0;
+  }
+
+  .label {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 0.7rem;
+    color: var(--forest);
+  }
+
+  .lot-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--forest);
+  }
+  .lot-tag::before {
+    content: "";
+    width: 18px;
+    height: 1px;
+    background: var(--forest);
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 0 80px;
+  }
+
+  /* ---------- Hero: asymmetric editorial grid ---------- */
+  header.hero {
+    text-align: left;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  @media (max-width: 620px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 28px; }
+    .hero-visual { order: -1; }
+  }
+  .crest {
+    width: 56px;
+    height: 56px;
+    margin: 0 0 22px;
+    display: block;
+  }
+  header.hero .label { display: block; margin-bottom: 18px; }
+  .hook {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.2rem;
+    color: var(--ink-soft);
+    max-width: 38ch;
+    margin: 0 0 18px;
+    line-height: 1.5;
+  }
+  h1 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-optical-sizing: auto;
+    font-size: clamp(2.2rem, 5.2vw, 3.1rem);
+    line-height: 1.04;
+    margin: 0 0 18px;
+    font-weight: 780;
+    font-stretch: 95%;
+    letter-spacing: -0.01em;
+  }
+  h1 em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--forest);
+  }
+  .sub {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    max-width: 42ch;
+    margin: 0 0 28px;
+    line-height: 1.6;
+  }
+  .cta-row {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .hero-text .cta-row { justify-content: flex-start; }
+  .btn {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 14px 28px;
+    border-radius: 2px;
+    border: 1px solid var(--forest);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .btn .wa-icon { width: 15px; height: 15px; flex-shrink: 0; }
+  .btn:focus-visible { outline: 2px solid var(--forest); outline-offset: 2px; }
+  .btn-primary {
+    background: var(--forest);
+    color: var(--sheen);
+  }
+  .btn-primary:hover { transform: translateY(-1px); background: #143a26; }
+
+  /* ---------- Entry sections ---------- */
+  /* Opaque background on every block, sticky or not: a plain sibling right
+     after a stuck sticky one can visually overlap it for a few pixels as it
+     unsticks, and without a solid background that shows as double-exposed
+     text instead of a clean cover. */
+  header.hero,
+  section.entry,
+  footer.closing,
+  .pull-quote {
+    background: var(--bg);
+    background-image: linear-gradient(165deg, var(--sheen) 0%, var(--bg) 60%, var(--surface) 100%);
+  }
+  /* position:sticky elements always paint above position:static ones, no matter
+     the HTML order. Low-specificity rule (ties with .stack, loses on source
+     order) so every block paints in document order instead. */
+  .wrap > * { position: relative; }
+  section.entry {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 24px;
+  }
+  section.entry .num {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--forest);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-top: 6px;
+  }
+  section.entry .num::before { content: "LOTE "; opacity: 0.6; }
+  section.entry h2 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: clamp(1.7rem, 3vw, 2.1rem);
+    font-weight: 600;
+    font-style: normal;
+    margin: 0 0 10px;
+    letter-spacing: -0.005em;
+  }
+  section.entry h2 .tag {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--gold-deep);
+  }
+  section.entry p {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+    max-width: 58ch;
+  }
+  @media (max-width: 520px) {
+    section.entry { grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  /* ---------- Pillars grid ---------- */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 10px;
+  }
+  @media (max-width: 480px) { .pillars { grid-template-columns: 1fr; } }
+  .pillar {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 18px 20px;
+    border-radius: 2px;
+    min-width: 0;
+  }
+  .pillar .label { display: block; margin-bottom: 8px; }
+  .pillar h3 {
+    font-size: 1.1rem;
+    margin: 0 0 6px;
+    font-weight: 600;
+  }
+  .pillar p {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* ---------- Program timeline ---------- */
+  .timeline {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 16px;
+    padding: 16px 0;
+    border-top: 1px dashed var(--rule);
+  }
+  .step:first-child { border-top: none; }
+  .step .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    margin-top: 6px;
+    justify-self: center;
+  }
+  .step h4 {
+    font-size: 1.05rem;
+    margin: 0 0 4px;
+    font-weight: 600;
+  }
+  .step p {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* ---------- Final CTA ---------- */
+  footer.closing {
+    text-align: center;
+    padding-top: 56px;
+  }
+  footer.closing h2 {
+    font-size: 2rem;
+    margin: 0 0 14px;
+    font-weight: 600;
+  }
+  footer.closing p {
+    color: var(--ink-soft);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.95rem;
+    max-width: 42ch;
+    margin: 0 auto 28px;
+    line-height: 1.6;
+  }
+  .fineprint {
+    margin-top: 40px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  #copy-toast {
+    position: fixed;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: var(--ink);
+    color: var(--bg);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.8rem;
+    padding: 10px 18px;
+    border-radius: 3px;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+  }
+  #copy-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ---------- ROI stats ---------- */
+  .roi {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 10px;
+  }
+  @media (max-width: 560px) { .roi { grid-template-columns: 1fr; } }
+  .roi .card {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    border-radius: 2px;
+    padding: 20px 18px;
+    text-align: center;
+    min-width: 0;
+  }
+  .roi .card.us { border-color: var(--forest); border-width: 1.5px; }
+  .roi .card .label { display: block; margin-bottom: 10px; }
+  .roi .card .big {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--ink);
+    display: block;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .roi .card.us .big { color: var(--forest); }
+  .roi .card .detail {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+  .pricebox {
+    margin: 10px 0 24px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 14px 32px;
+    border: 1px dashed var(--forest);
+    border-radius: 2px;
+    transform: rotate(-1.2deg);
+    width: fit-content;
+  }
+  .pricebox .row { display: flex; align-items: baseline; gap: 10px; }
+  .pricebox .tasacion {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--forest);
+  }
+  .pricebox .amount {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 2.3rem;
+    color: var(--forest);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .pricebox .was {
+    text-decoration: line-through;
+    color: var(--ink-soft);
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 0.85rem;
+  }
+  .pricebox .note {
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- 3D book mockup ---------- */
+  /* ---------- Real product photography ---------- */
+  .hero-visual {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .hero-blob {
+    position: absolute;
+    width: 78%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--forest) 0%, transparent 72%);
+    opacity: 0.16;
+    filter: blur(2px);
+    z-index: 0;
+  }
+  .hero-photo {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 3px;
+    box-shadow: 0 24px 48px rgba(31, 74, 50, 0.22);
+    display: block;
+  }
+  .interior-photo {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 2px;
+    margin-top: 16px;
+    box-shadow: 0 12px 28px rgba(74, 25, 25, 0.16);
+    display: block;
+  }
+  .mockup-wrap {
+    perspective: 1100px;
+    display: flex;
+    justify-content: center;
+    margin: 36px 0 8px;
+  }
+  .book {
+    --cover: #c9a227;
+    --cover-deep: #9c7a28;
+    --foil: #fff8e6;
+    position: relative;
+    width: 188px;
+    height: 264px;
+    transform: rotateY(-24deg) rotateX(3deg);
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease;
+  }
+  .mockup-wrap:hover .book,
+  .book.nudge { transform: rotateY(-14deg) rotateX(1deg); }
+
+  /* ---------- Sticky stack: each block sticks, the next rises to cover it ----------
+     Only blocks whose full content fits inside a typical viewport get this —
+     a block taller than the viewport would hide its own lower content (e.g. a
+     CTA button) behind the next block before the user ever scrolls to it. */
+  .stack {
+    position: sticky;
+    top: 0;
+    box-shadow: 0 -16px 28px -16px rgba(36, 26, 15, 0.18);
+  }
+
+  /* ---------- Generic tilt-in-3D cards ---------- */
+  .tilt-stage { perspective: 900px; }
+  .tilt {
+    transform-style: preserve-3d;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    will-change: transform;
+  }
+  .tilt:hover { box-shadow: 0 14px 26px rgba(74, 55, 16, 0.18); }
+  @media (prefers-reduced-motion: reduce) {
+    .tilt { transition: none; }
+  }
+  .book .spine {
+    position: absolute;
+    top: 0; bottom: 0; left: -9px;
+    width: 9px;
+    background: var(--cover-deep);
+    transform: rotateY(-90deg) translateZ(4.5px);
+    transform-origin: right;
+    border-radius: 2px 0 0 2px;
+  }
+  .book .pages {
+    position: absolute;
+    top: 5px; bottom: 5px; right: -9px;
+    width: 9px;
+    background: repeating-linear-gradient(to bottom, #fbf4e3 0 2px, #e4d6b4 2px 4px);
+    transform: rotateY(90deg) translateZ(4.5px);
+    transform-origin: left;
+    border-radius: 0 2px 2px 0;
+    box-shadow: 1px 0 3px rgba(0,0,0,0.25);
+  }
+  .book .front {
+    position: absolute;
+    inset: 0;
+    border-radius: 3px 9px 9px 3px;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.08), transparent 40%),
+      linear-gradient(135deg, var(--cover), var(--cover-deep));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 22px 16px;
+    box-sizing: border-box;
+    box-shadow: 10px 16px 30px rgba(20, 12, 2, 0.35), inset 0 0 0 1px rgba(255,255,255,0.06);
+    backface-visibility: hidden;
+  }
+  .book .front .mini-crest {
+    width: 32px; height: 32px;
+    margin-bottom: 14px;
+    opacity: 0.95;
+  }
+  .book .front .title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--foil);
+    text-align: center;
+    line-height: 1.4;
+  }
+  .book .front .rule {
+    width: 28px; height: 1px;
+    background: var(--foil);
+    opacity: 0.6;
+    margin: 10px 0;
+  }
+  .book .front .name {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-size: 0.82rem;
+    color: var(--foil);
+    opacity: 0.9;
+    text-align: center;
+    min-height: 1.2em;
+    max-width: 100%;
+    overflow-wrap: break-word;
+  }
+
+  /* ---------- Personalize panel ---------- */
+  .personalize {
+    margin-top: 28px;
+    max-width: 340px;
+    margin-inline: auto;
+  }
+  .personalize label {
+    display: block;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .personalize input[type="text"] {
+    width: 100%;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1rem;
+    padding: 10px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--surface);
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .personalize input[type="text"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+  .swatches {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+  }
+  .swatch-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .swatch {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+  }
+  .swatch[aria-pressed="true"] { border-color: var(--gold); }
+  .swatch:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .swatch-name {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+  }
+
+
+  /* ---------- Trust line + O/CO micro-answers ---------- */
+  .trust-line {
+    margin-top: 12px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    text-align: center;
+  }
+  .oco {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: 10px;
+  }
+  @media (max-width: 480px) { .oco { grid-template-columns: 1fr; } }
+  .oco .item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .oco .item .mark {
+    color: var(--gold);
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .oco .item p {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* ---------- Numbered benefits ---------- */
+  .benefits {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .benefits li {
+    display: grid;
+    grid-template-columns: 34px 1fr;
+    gap: 14px;
+    align-items: baseline;
+    padding: 12px 14px;
+    border-radius: 2px;
+  }
+  .benefits li.tilt:hover { background: var(--surface); }
+  .benefits .n {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.3rem;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .benefits h3 {
+    font-size: 1.05rem;
+    margin: 0 0 3px;
+    font-weight: 600;
+  }
+  .benefits p {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  /* ---------- Content index ---------- */
+  .index-list {
+    margin-top: 10px;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .index-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--rule);
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.88rem;
+  }
+  .index-row:last-child { border-bottom: none; }
+  .index-row .when { color: var(--gold-deep); font-weight: 600; flex-shrink: 0; }
+  .index-row .what { color: var(--ink-soft); text-align: right; }
+
+  /* ---------- Fit / not-fit ---------- */
+  .fit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 10px;
+  }
+  @media (max-width: 520px) { .fit-grid { grid-template-columns: 1fr; } }
+  .fit-col {
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 18px 20px;
+  }
+  .fit-col.yes { border-color: var(--gold); background: var(--surface); }
+  .fit-col h3 {
+    font-size: 1rem;
+    margin: 0 0 10px;
+    font-weight: 600;
+  }
+  .fit-col ul {
+    margin: 0;
+    padding-left: 18px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  /* ---------- Pull quote ---------- */
+  .pull-quote {
+    text-align: center;
+    padding: 50px 0 56px;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+  .pull-quote .glyph {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 4.5rem;
+    font-weight: 600;
+    color: var(--forest);
+    opacity: 0.35;
+    line-height: 1;
+    display: block;
+    margin-bottom: -6px;
+  }
+  .pull-quote p {
+    font-family: 'Fraunces', Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(1.4rem, 3.6vw, 1.9rem);
+    color: var(--ink);
+    max-width: 42ch;
+    margin: 0 auto;
+    line-height: 1.4;
+  }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,780;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+</head>
+<body>
+
+<div id="variant-switcher">
+  <span>Vista previa interna —</span>
+  <select onchange="window.location.href = this.value">
+    <option value="/rumbo/">Rumbo — cinemático</option>
+    <option value="/rumbo/agenda-aurea/" selected>Agenda Áurea — ledger</option>
+    <option value="/rumbo/imperfecta/">Imperfecta — dorado</option>
+  </select>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-grid">
+      <div class="hero-text">
+        <svg class="crest" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="32" cy="32" r="30" fill="none" stroke="var(--gold)" stroke-width="1.2"/>
+          <circle cx="32" cy="32" r="22" fill="none" stroke="var(--gold)" stroke-width="0.8"/>
+          <path d="M32 14 L38 30 L32 50 L26 30 Z" fill="none" stroke="var(--gold)" stroke-width="1.2"/>
+          <circle cx="32" cy="30" r="2.6" fill="var(--gold)"/>
+        </svg>
+        <span class="label">10 minutos cada mañana, 90 días seguidos</span>
+        <p class="hook">¿Cuántas agendas empezaste llenando en enero… y abandonaste antes de marzo?</p>
+        <h1>Diez minutos<br>para que <em>tu día<br>deje de improvisarse.</em></h1>
+        <p class="sub">
+          Te sientas, escribes dos páginas, cierras. Nadie te llama, no hay que iniciar sesión
+          en nada — el camino ya está trazado para ti antes de que lo necesites.
+        </p>
+
+        <div class="pricebox">
+          <span class="tasacion">Tasación de lanzamiento</span>
+          <div class="row">
+            <span class="was">$68</span>
+            <span class="amount">$42</span>
+          </div>
+          <span class="note">pago único · envío incluido</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" id="cta-start" target="_blank" rel="noopener">
+            <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.07-1.33A9.96 9.96 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.43-4.4-1.18l-.32-.19-3 .79.8-2.93-.2-.3A7.96 7.96 0 0 1 4 12c0-4.42 3.58-8 8-8s8 3.58 8 8-3.58 8-8 8zm4.4-5.6c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.01-.37.11-.49.12-.12.27-.3.4-.46.13-.16.17-.27.26-.45.09-.18.04-.33-.04-.46-.08-.12-.5-1.2-.68-1.65-.18-.44-.37-.38-.5-.39h-.43c-.14 0-.37.05-.56.27-.19.22-.75.73-.75 1.78s.77 2.07.88 2.21c.11.14 1.5 2.3 3.65 3.13 1.82.7 2.19.56 2.59.52.4-.04 1.3-.53 1.48-1.04.18-.51.18-.95.13-1.04-.05-.09-.2-.14-.44-.26z"/></svg>
+            Pedir por WhatsApp
+          </a>
+        </div>
+        <p class="trust-line">Garantía de satisfacción de 30 días · envío a todo el país</p>
+        <p class="trust-line">
+          <a id="cta-sample" target="_blank" rel="noopener" style="color:var(--forest); text-decoration:underline;">¿No estás seguro? Pide gratis la página 1 en PDF, sin compromiso</a>
+        </p>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-blob" aria-hidden="true"></div>
+        <img class="hero-photo" src="assets/agenda-hero-web.jpg" alt="Agenda Áurea 2027, tapa dura color vino con hoja de oro, sobre fondo crema" loading="eager">
+      </div>
+    </div>
+  </header>
+
+  <section class="entry">
+    <div class="num">01</div>
+    <div>
+      <h2>Personalízala <span class="tag">antes de pedirla</span></h2>
+      <p>Elige el color de tapa y el nombre que quieres grabado. Lo ves reflejado aquí mismo, antes de comprar.</p>
+
+      <div class="mockup-wrap">
+        <div class="book" id="book">
+          <div class="spine"></div>
+          <div class="pages"></div>
+          <div class="front">
+            <svg class="mini-crest" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="32" cy="32" r="30" fill="none" stroke="var(--foil)" stroke-width="1.6"/>
+              <path d="M32 14 L38 30 L32 50 L26 30 Z" fill="none" stroke="var(--foil)" stroke-width="1.6"/>
+              <circle cx="32" cy="30" r="2.6" fill="var(--foil)"/>
+            </svg>
+            <span class="title">Agenda<br>Áurea</span>
+            <span class="rule"></span>
+            <span class="name" id="book-name">Tu nombre aquí</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="personalize">
+        <label for="name-input">Grabado en la tapa (opcional)</label>
+        <input type="text" id="name-input" maxlength="24" placeholder="Ej. María José">
+        <label>Color de tapa</label>
+        <div class="swatches">
+          <div class="swatch-item">
+            <button type="button" class="swatch" data-cover="#c9a227" data-deep="#9c7a28" style="background:#c9a227" aria-pressed="true" aria-label="Dorado clásico"></button>
+            <span class="swatch-name">Dorado</span>
+          </div>
+          <div class="swatch-item">
+            <button type="button" class="swatch" data-cover="#2f4a3a" data-deep="#1f3327" style="background:#2f4a3a" aria-pressed="false" aria-label="Verde botella"></button>
+            <span class="swatch-name">Verde</span>
+          </div>
+          <div class="swatch-item">
+            <button type="button" class="swatch" data-cover="#5a1f2b" data-deep="#3d131c" style="background:#5a1f2b" aria-pressed="false" aria-label="Vino"></button>
+            <span class="swatch-name">Vino</span>
+          </div>
+          <div class="swatch-item">
+            <button type="button" class="swatch" data-cover="#2a3a52" data-deep="#1c2838" style="background:#2a3a52" aria-pressed="false" aria-label="Azul medianoche"></button>
+            <span class="swatch-name">Azul</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-row" style="margin-top:22px;">
+        <a class="btn btn-primary" id="cta-start-personalize" target="_blank" rel="noopener">
+          <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.07-1.33A9.96 9.96 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.43-4.4-1.18l-.32-.19-3 .79.8-2.93-.2-.3A7.96 7.96 0 0 1 4 12c0-4.42 3.58-8 8-8s8 3.58 8 8-3.58 8-8 8zm4.4-5.6c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.01-.37.11-.49.12-.12.27-.3.4-.46.13-.16.17-.27.26-.45.09-.18.04-.33-.04-.46-.08-.12-.5-1.2-.68-1.65-.18-.44-.37-.38-.5-.39h-.43c-.14 0-.37.05-.56.27-.19.22-.75.73-.75 1.78s.77 2.07.88 2.21c.11.14 1.5 2.3 3.65 3.13 1.82.7 2.19.56 2.59.52.4-.04 1.3-.53 1.48-1.04.18-.51.18-.95.13-1.04-.05-.09-.2-.14-.44-.26z"/></svg>
+          Pedir esta versión — $42
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="entry stack">
+    <div class="num">02</div>
+    <div>
+      <h2>No compras una agenda. <span class="tag">Compras 10 minutos tuyos.</span></h2>
+      <p>
+        La tapa dura y la hoja de oro son el envoltorio. Lo que de verdad pagas es la
+        pausa de la mañana en la que tu cabeza deja de dar vueltas y el día agarra
+        forma — noventa veces seguidas, sin tener que inventar el sistema cada vez.
+      </p>
+    </div>
+  </section>
+
+  <section class="entry stack">
+    <div class="num">03</div>
+    <div>
+      <h2>El mismo método de coaching, <span class="tag">97% más barato</span></h2>
+      <p>Compara lo que pagas por el mismo resultado: metas claras y un plan que sostienes 90 días.</p>
+      <div class="roi tilt-stage">
+        <div class="card tilt">
+          <span class="label">Coach 1:1</span>
+          <span class="big">$1,800+</span>
+          <span class="detail">12 sesiones · agendadas</span>
+        </div>
+        <div class="card tilt">
+          <span class="label">Planner en blanco</span>
+          <span class="big">$20</span>
+          <span class="detail">sin método, lo inventas tú</span>
+        </div>
+        <div class="card us tilt">
+          <span class="label">Agenda Áurea</span>
+          <span class="big">$42</span>
+          <span class="detail">método incluido · una vez</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="entry">
+    <div class="num">04</div>
+    <div>
+      <h2>6 razones <span class="tag">para elegirla</span></h2>
+      <ol class="benefits tilt-stage">
+        <li class="tilt"><span class="n">1</span><div><h3>Metas bien formadas</h3><p>En positivo y verificables: sabrás exactamente cuándo las lograste.</p></div></li>
+        <li class="tilt"><span class="n">2</span><div><h3>Anclajes y reencuadre</h3><p>Ejercicios breves para sostener la confianza y soltar lo que frena.</p></div></li>
+        <li class="tilt"><span class="n">3</span><div><h3>Revisión semanal guiada</h3><p>Preguntas ya impresas: qué aprendí, qué ajusto.</p></div></li>
+        <li class="tilt"><span class="n">4</span><div><h3>Nada que configurar</h3><p>Lista para escribir desde el día 1, sin apps ni cuentas.</p></div></li>
+        <li class="tilt"><span class="n">5</span><div><h3>Un objeto que se queda a la vista</h3><p>Tapa dura y hoja de oro: en tu escritorio, no en un cajón.</p></div></li>
+        <li class="tilt"><span class="n">6</span><div><h3>Pago único</h3><p>Sin suscripción ni cargos recurrentes después de la compra.</p></div></li>
+      </ol>
+      <img class="interior-photo" src="assets/agenda-interior-web.jpg" alt="Páginas interiores de Agenda Áurea en papel grueso color crema, con cinta separadora dorada" loading="lazy">
+      <p class="sub" style="margin:10px 0 0; max-width:none; text-align:left;">Papel grueso, layout semanal ya impreso y cinta separadora dorada — así se ve por dentro.</p>
+    </div>
+  </section>
+
+  <section class="entry stack">
+    <div class="num">05</div>
+    <div>
+      <h2>Qué vas a <span class="tag">llenar, semana a semana</span></h2>
+      <div class="index-list">
+        <div class="index-row"><span class="when">Semana 1</span><span class="what">Autoevaluación y metas bien formadas</span></div>
+        <div class="index-row"><span class="when">Semanas 2–10</span><span class="what">Plan de acción diario con anclaje de apoyo</span></div>
+        <div class="index-row"><span class="when">Cada viernes</span><span class="what">Revisión guiada de la semana</span></div>
+        <div class="index-row"><span class="when">Semana 12</span><span class="what">Cierre de los 90 días y próximos pasos</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="entry stack">
+    <div class="num">06</div>
+    <div>
+      <h2>¿Es para <span class="tag">ti?</span></h2>
+      <p>Esto es para quienes ya se cansaron de empezar de cero cada enero — no para quienes todavía no lo han intentado.</p>
+      <div class="fit-grid tilt-stage">
+        <div class="fit-col yes tilt">
+          <h3>Es para ti si…</h3>
+          <ul>
+            <li>Ya probaste planners en blanco y los abandonaste</li>
+            <li>Quieres estructura sin pagar por sesiones en vivo</li>
+            <li>Prefieres escribir a mano antes que abrir una app más</li>
+          </ul>
+        </div>
+        <div class="fit-col tilt">
+          <h3>Mejor espera si…</h3>
+          <ul>
+            <li>Buscas acompañamiento personalizado 1:1</li>
+            <li>Prefieres todo digital y sincronizado entre dispositivos</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pull-quote stack">
+    <span class="glyph" aria-hidden="true">&rdquo;</span>
+    <p>Un sistema que no necesitas recordar usar, porque está abierto en tu escritorio.</p>
+  </div>
+
+  <section class="entry stack">
+    <div class="num">07</div>
+    <div>
+      <h2>Antes de pedirla, <span class="tag">esto es lo que nos preguntan</span></h2>
+      <div class="oco">
+        <div class="item"><span class="mark">—</span><p>Lista para escribir desde el día 1: no hay que configurar nada ni descargar una app.</p></div>
+        <div class="item"><span class="mark">—</span><p>Sirve para metas de carrera, finanzas o hábitos — tú decides el tema de cada página.</p></div>
+        <div class="item"><span class="mark">—</span><p>Si no te convence en los primeros 30 días, te devolvemos tu dinero.</p></div>
+        <div class="item"><span class="mark">—</span><p>Pago único: sin suscripción ni cargos recurrentes después de la compra.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="entry stack">
+    <div class="num">08</div>
+    <div>
+      <h2>Testimonios <span class="tag">reales</span></h2>
+      <p>Agenda Áurea está por lanzarse. En cuanto lleguen las primeras entregas, aquí van a aparecer experiencias reales de quienes la usaron — con nombre y sin caras inventadas.</p>
+    </div>
+  </section>
+
+  <section class="entry stack">
+    <div class="num">09</div>
+    <div>
+      <h2>Así <span class="tag">funciona</span></h2>
+      <div class="timeline">
+        <div class="step">
+          <span class="dot"></span>
+          <div>
+            <h4>1. Eliges color y nombre</h4>
+            <p>En la sección de personalización, en menos de un minuto.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="dot"></span>
+          <div>
+            <h4>2. Confirmas por WhatsApp</h4>
+            <p>Te escribimos para cerrar el pedido con el color y nombre que elegiste.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="dot"></span>
+          <div>
+            <h4>3. Llega a tu puerta, empiezas hoy</h4>
+            <p>Sin configurar nada: abres la página 1 y escribes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="pull-quote stack" style="border-bottom:none; padding-bottom:0;">
+    <p style="font-style:normal; font-size:1.05rem; max-width:52ch; color:var(--ink-soft);">
+      Sin un sistema a mano, enero se parece mucho a marzo: la misma agenda a medias,
+      las mismas metas pospuestas otra vez. Dentro de 90 días puedes tener la última
+      página llena — o la misma pregunta de siempre.
+    </p>
+  </div>
+
+  <footer class="closing stack">
+    <h2>Tu primera página te espera.</h2>
+    <p>Llega a tu puerta, no a tu bandeja de entrada. Envío incluido, pago único.</p>
+
+    <div class="cta-row">
+      <a class="btn btn-primary" id="cta-start-2" target="_blank" rel="noopener">
+        <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.07-1.33A9.96 9.96 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.6 0-3.1-.43-4.4-1.18l-.32-.19-3 .79.8-2.93-.2-.3A7.96 7.96 0 0 1 4 12c0-4.42 3.58-8 8-8s8 3.58 8 8-3.58 8-8 8zm4.4-5.6c-.24-.12-1.43-.7-1.65-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.01-.37-1.92-1.18-.71-.63-1.19-1.41-1.33-1.65-.14-.24-.01-.37.11-.49.12-.12.27-.3.4-.46.13-.16.17-.27.26-.45.09-.18.04-.33-.04-.46-.08-.12-.5-1.2-.68-1.65-.18-.44-.37-.38-.5-.39h-.43c-.14 0-.37.05-.56.27-.19.22-.75.73-.75 1.78s.77 2.07.88 2.21c.11.14 1.5 2.3 3.65 3.13 1.82.7 2.19.56 2.59.52.4-.04 1.3-.53 1.48-1.04.18-.51.18-.95.13-1.04-.05-.09-.2-.14-.44-.26z"/></svg>
+        Pedir la mía — $42
+      </a>
+    </div>
+    <p class="fineprint">
+      <a id="cta-corp" target="_blank" rel="noopener" style="color:var(--ink-soft); text-decoration:underline;">¿Pedido corporativo o al por mayor? Escríbenos por WhatsApp</a>
+    </p>
+  </footer>
+
+</div>
+
+<div id="copy-toast" role="status" aria-live="polite"></div>
+
+<script>
+  function showToast(msg) {
+    var t = document.getElementById('copy-toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window.__toastTimer);
+    window.__toastTimer = setTimeout(function () { t.classList.remove('show'); }, 2200);
+  }
+
+  // Reemplaza este número por el WhatsApp real del negocio (formato: código de país + número, sin + ni espacios).
+  var WHATSAPP_NUMBER = '51999999999';
+  var COLOR_NAMES = { '#c9a227': 'Dorado', '#2f4a3a': 'Verde', '#5a1f2b': 'Vino', '#2a3a52': 'Azul' };
+
+  function waLink(message) {
+    return 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(message);
+  }
+
+  // Set every CTA's href first, before any decorative/animation code runs below —
+  // the primary conversion action must not depend on unrelated JS succeeding.
+  document.getElementById('cta-start').href = waLink('Hola, quiero pedir mi Agenda Áurea ($42).');
+  document.getElementById('cta-start-2').href = waLink('Hola, quiero pedir mi Agenda Áurea ($42).');
+  document.getElementById('cta-corp').href = waLink('Hola, quiero consultar por un pedido corporativo / al por mayor de Agenda Áurea.');
+  document.getElementById('cta-sample').href = waLink('Hola, quiero ver gratis la página 1 de Agenda Áurea en PDF antes de pedir.');
+
+  var nameInput = document.getElementById('name-input');
+  var bookName = document.getElementById('book-name');
+  var book = document.getElementById('book');
+  var personalizeLink = document.getElementById('cta-start-personalize');
+
+  function currentColorName() {
+    var cover = book.style.getPropertyValue('--cover') || '#c9a227';
+    return COLOR_NAMES[cover] || 'Dorado';
+  }
+
+  function updatePersonalizeLink() {
+    var name = nameInput.value.trim();
+    var msg = 'Hola, quiero pedir mi Agenda Áurea personalizada ($42). Color de tapa: ' + currentColorName() + '.';
+    if (name) msg += ' Nombre para grabar: ' + name + '.';
+    personalizeLink.href = waLink(msg);
+  }
+
+  nameInput.addEventListener('input', function () {
+    bookName.textContent = nameInput.value.trim() || 'Tu nombre aquí';
+    updatePersonalizeLink();
+  });
+
+  var swatches = document.querySelectorAll('.swatch');
+  swatches.forEach(function (sw) {
+    sw.addEventListener('click', function () {
+      book.style.setProperty('--cover', sw.getAttribute('data-cover'));
+      book.style.setProperty('--cover-deep', sw.getAttribute('data-deep'));
+      swatches.forEach(function (s) { s.setAttribute('aria-pressed', 'false'); });
+      sw.setAttribute('aria-pressed', 'true');
+      updatePersonalizeLink();
+    });
+  });
+
+  updatePersonalizeLink();
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduceMotion) {
+    // Hero book follows the cursor in real 3D instead of a fixed hover angle.
+    var mockupWrap = document.querySelector('.mockup-wrap');
+    if (mockupWrap) {
+      mockupWrap.addEventListener('mousemove', function (e) {
+        var rect = mockupWrap.getBoundingClientRect();
+        var px = (e.clientX - rect.left) / rect.width - 0.5;
+        var py = (e.clientY - rect.top) / rect.height - 0.5;
+        book.style.transform = 'rotateY(' + (-24 + px * 26) + 'deg) rotateX(' + (3 - py * 14) + 'deg)';
+      });
+      mockupWrap.addEventListener('mouseleave', function () {
+        book.style.transform = '';
+      });
+    }
+
+    // Generic 3D tilt for ROI cards, benefits and the fit columns.
+    document.querySelectorAll('.tilt').forEach(function (el) {
+      el.addEventListener('mousemove', function (e) {
+        var rect = el.getBoundingClientRect();
+        var px = (e.clientX - rect.left) / rect.width - 0.5;
+        var py = (e.clientY - rect.top) / rect.height - 0.5;
+        el.style.transform = 'rotateY(' + (px * 10) + 'deg) rotateX(' + (-py * 10) + 'deg) translateZ(4px)';
+      });
+      el.addEventListener('mouseleave', function () {
+        el.style.transform = '';
+      });
+    });
+  }
+</script>
+</body>
+</html>
