@@ -47,42 +47,45 @@
     hand-written plan. Sections are numbered entries, not cards.
   */
   :root {
-    --bg: #f6f0e1;
-    --surface: #efe4cb;
-    --sheen: #fffcf4;
-    --ink: #241a0f;
-    --ink-soft: #6b5c3f;
-    --gold: #b8863b;
-    --gold-deep: #8a5f1f;
-    --forest: #1f4a32;
-    --rule: #d9c69a;
+    /* Blanco y negro, sin color de marca — registro ejecutivo, no festivo.
+       Los nombres de variable (--gold, --forest...) quedan igual para no
+       tocar cada regla que los usa; solo cambia el valor a tinta neutra. */
+    --bg: #ffffff;
+    --surface: #f1f1f0;
+    --sheen: #ffffff;
+    --ink: #0f0f0f;
+    --ink-soft: #55555a;
+    --gold: #141414;
+    --gold-deep: #000000;
+    --forest: #000000;
+    --rule: #dcdcdc;
     color-scheme: light;
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #f2e6c6;
-      --surface: #ebdab0;
-      --sheen: #fffcf3;
-      --ink: #241a0f;
-      --ink-soft: #6b5c3f;
-      --gold: #b8863b;
-      --gold-deep: #8a5f1f;
-      --forest: #1f4a32;
-      --rule: #ddc99a;
+      --bg: #ffffff;
+      --surface: #f1f1f0;
+      --sheen: #ffffff;
+      --ink: #0f0f0f;
+      --ink-soft: #55555a;
+      --gold: #141414;
+      --gold-deep: #000000;
+      --forest: #000000;
+      --rule: #dcdcdc;
       color-scheme: light;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #f2e6c6;
-    --surface: #ebdab0;
-    --sheen: #fffcf3;
-    --ink: #241a0f;
-    --ink-soft: #6b5c3f;
-    --gold: #b8863b;
-    --gold-deep: #8a5f1f;
-    --forest: #1f4a32;
-    --rule: #ddc99a;
+    --bg: #ffffff;
+    --surface: #f1f1f0;
+    --sheen: #ffffff;
+    --ink: #0f0f0f;
+    --ink-soft: #55555a;
+    --gold: #141414;
+    --gold-deep: #000000;
+    --forest: #000000;
+    --rule: #dcdcdc;
     color-scheme: light;
   }
 
@@ -488,16 +491,20 @@
     width: 100%;
     max-width: 300px;
     border-radius: 3px;
-    box-shadow: 0 24px 48px rgba(31, 74, 50, 0.22);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18);
     display: block;
+    /* La foto del producto sigue siendo la de la tapa vino/dorado —
+       en blanco y negro mientras no se regenera la fotografía real. */
+    filter: grayscale(1) contrast(1.08);
   }
   .interior-photo {
     width: 100%;
     max-width: 100%;
     border-radius: 2px;
     margin-top: 16px;
-    box-shadow: 0 12px 28px rgba(74, 25, 25, 0.16);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
     display: block;
+    filter: grayscale(1) contrast(1.08);
   }
   .mockup-wrap {
     perspective: 1100px;
@@ -506,9 +513,9 @@
     margin: 36px 0 8px;
   }
   .book {
-    --cover: #c9a227;
-    --cover-deep: #9c7a28;
-    --foil: #fff8e6;
+    --cover: #141414;
+    --cover-deep: #000000;
+    --foil: #ffffff;
     position: relative;
     width: 188px;
     height: 264px;
@@ -526,7 +533,7 @@
   .stack {
     position: sticky;
     top: 0;
-    box-shadow: 0 -16px 28px -16px rgba(36, 26, 15, 0.18);
+    box-shadow: 0 -16px 28px -16px rgba(0, 0, 0, 0.14);
   }
 
   /* ---------- Generic tilt-in-3D cards ---------- */
@@ -536,7 +543,7 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     will-change: transform;
   }
-  .tilt:hover { box-shadow: 0 14px 26px rgba(74, 55, 16, 0.18); }
+  .tilt:hover { box-shadow: 0 14px 26px rgba(0, 0, 0, 0.16); }
   @media (prefers-reduced-motion: reduce) {
     .tilt { transition: none; }
   }
@@ -572,7 +579,7 @@
     justify-content: center;
     padding: 22px 16px;
     box-sizing: border-box;
-    box-shadow: 10px 16px 30px rgba(20, 12, 2, 0.35), inset 0 0 0 1px rgba(255,255,255,0.06);
+    box-shadow: 10px 16px 30px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255,255,255,0.06);
     backface-visibility: hidden;
   }
   .book .front .mini-crest {
@@ -833,6 +840,7 @@
           <path d="M32 14 L38 30 L32 50 L26 30 Z" fill="none" stroke="var(--gold)" stroke-width="1.2"/>
           <circle cx="32" cy="30" r="2.6" fill="var(--gold)"/>
         </svg>
+        <span class="lot-tag" style="display:block; margin-bottom:12px;">Edición Ejecutiva</span>
         <span class="label">10 minutos cada mañana, 90 días seguidos</span>
         <p class="hook">¿Cuántas agendas empezaste llenando en enero… y abandonaste antes de marzo?</p>
         <h1>Diez minutos<br>para que <em>tu día<br>deje de improvisarse.</em></h1>
@@ -863,7 +871,7 @@
 
       <div class="hero-visual">
         <div class="hero-blob" aria-hidden="true"></div>
-        <img class="hero-photo" src="assets/agenda-hero-web.jpg" alt="Agenda Áurea 2027, tapa dura color vino con hoja de oro, sobre fondo crema" loading="eager">
+        <img class="hero-photo" src="assets/agenda-hero-web.jpg" alt="Agenda Áurea 2027, tapa dura negra minimalista con grabado en relieve, sobre fondo blanco" loading="eager">
       </div>
     </div>
   </header>
@@ -897,20 +905,20 @@
         <label>Color de tapa</label>
         <div class="swatches">
           <div class="swatch-item">
-            <button type="button" class="swatch" data-cover="#c9a227" data-deep="#9c7a28" style="background:#c9a227" aria-pressed="true" aria-label="Dorado clásico"></button>
-            <span class="swatch-name">Dorado</span>
+            <button type="button" class="swatch" data-cover="#141414" data-deep="#000000" data-foil="#ffffff" style="background:#141414" aria-pressed="true" aria-label="Negro"></button>
+            <span class="swatch-name">Negro</span>
           </div>
           <div class="swatch-item">
-            <button type="button" class="swatch" data-cover="#2f4a3a" data-deep="#1f3327" style="background:#2f4a3a" aria-pressed="false" aria-label="Verde botella"></button>
-            <span class="swatch-name">Verde</span>
+            <button type="button" class="swatch" data-cover="#3a3a3a" data-deep="#1f1f1f" data-foil="#ffffff" style="background:#3a3a3a" aria-pressed="false" aria-label="Grafito"></button>
+            <span class="swatch-name">Grafito</span>
           </div>
           <div class="swatch-item">
-            <button type="button" class="swatch" data-cover="#5a1f2b" data-deep="#3d131c" style="background:#5a1f2b" aria-pressed="false" aria-label="Vino"></button>
-            <span class="swatch-name">Vino</span>
+            <button type="button" class="swatch" data-cover="#8a8a8a" data-deep="#6b6b6b" data-foil="#ffffff" style="background:#8a8a8a" aria-pressed="false" aria-label="Piedra"></button>
+            <span class="swatch-name">Piedra</span>
           </div>
           <div class="swatch-item">
-            <button type="button" class="swatch" data-cover="#2a3a52" data-deep="#1c2838" style="background:#2a3a52" aria-pressed="false" aria-label="Azul medianoche"></button>
-            <span class="swatch-name">Azul</span>
+            <button type="button" class="swatch" data-cover="#f2f2ef" data-deep="#d8d8d3" data-foil="#141414" style="background:#f2f2ef; border-color: var(--rule);" aria-pressed="false" aria-label="Blanco hueso"></button>
+            <span class="swatch-name">Blanco</span>
           </div>
         </div>
       </div>
@@ -929,7 +937,7 @@
     <div>
       <h2>No compras una agenda. <span class="tag">Compras 10 minutos tuyos.</span></h2>
       <p>
-        La tapa dura y la hoja de oro son el envoltorio. Lo que de verdad pagas es la
+        La tapa dura negra y el acabado minimalista son el envoltorio. Lo que de verdad pagas es la
         pausa de la mañana en la que tu cabeza deja de dar vueltas y el día agarra
         forma — noventa veces seguidas, sin tener que inventar el sistema cada vez.
       </p>
@@ -970,11 +978,11 @@
         <li class="tilt"><span class="n">2</span><div><h3>Anclajes y reencuadre</h3><p>Ejercicios breves para sostener la confianza y soltar lo que frena.</p></div></li>
         <li class="tilt"><span class="n">3</span><div><h3>Revisión semanal guiada</h3><p>Preguntas ya impresas: qué aprendí, qué ajusto.</p></div></li>
         <li class="tilt"><span class="n">4</span><div><h3>Nada que configurar</h3><p>Lista para escribir desde el día 1, sin apps ni cuentas.</p></div></li>
-        <li class="tilt"><span class="n">5</span><div><h3>Un objeto que se queda a la vista</h3><p>Tapa dura y hoja de oro: en tu escritorio, no en un cajón.</p></div></li>
+        <li class="tilt"><span class="n">5</span><div><h3>Un objeto que se queda a la vista</h3><p>Tapa dura negra, sin logos ni adornos: en tu escritorio, no en un cajón.</p></div></li>
         <li class="tilt"><span class="n">6</span><div><h3>Pago único</h3><p>Sin suscripción ni cargos recurrentes después de la compra.</p></div></li>
       </ol>
-      <img class="interior-photo" src="assets/agenda-interior-web.jpg" alt="Páginas interiores de Agenda Áurea en papel grueso color crema, con cinta separadora dorada" loading="lazy">
-      <p class="sub" style="margin:10px 0 0; max-width:none; text-align:left;">Papel grueso, layout semanal ya impreso y cinta separadora dorada — así se ve por dentro.</p>
+      <img class="interior-photo" src="assets/agenda-interior-web.jpg" alt="Páginas interiores de Agenda Áurea en papel grueso color blanco, con cinta separadora negra" loading="lazy">
+      <p class="sub" style="margin:10px 0 0; max-width:none; text-align:left;">Papel grueso, layout semanal ya impreso y cinta separadora — así se ve por dentro.</p>
     </div>
   </section>
 
@@ -1110,7 +1118,7 @@
 
   // Reemplaza este número por el WhatsApp real del negocio (formato: código de país + número, sin + ni espacios).
   var WHATSAPP_NUMBER = '51999999999';
-  var COLOR_NAMES = { '#c9a227': 'Dorado', '#2f4a3a': 'Verde', '#5a1f2b': 'Vino', '#2a3a52': 'Azul' };
+  var COLOR_NAMES = { '#141414': 'Negro', '#3a3a3a': 'Grafito', '#8a8a8a': 'Piedra', '#f2f2ef': 'Blanco' };
 
   function waLink(message) {
     return 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(message);
@@ -1129,8 +1137,8 @@
   var personalizeLink = document.getElementById('cta-start-personalize');
 
   function currentColorName() {
-    var cover = book.style.getPropertyValue('--cover') || '#c9a227';
-    return COLOR_NAMES[cover] || 'Dorado';
+    var cover = book.style.getPropertyValue('--cover') || '#141414';
+    return COLOR_NAMES[cover] || 'Negro';
   }
 
   function updatePersonalizeLink() {
@@ -1150,6 +1158,7 @@
     sw.addEventListener('click', function () {
       book.style.setProperty('--cover', sw.getAttribute('data-cover'));
       book.style.setProperty('--cover-deep', sw.getAttribute('data-deep'));
+      book.style.setProperty('--foil', sw.getAttribute('data-foil') || '#ffffff');
       swatches.forEach(function (s) { s.setAttribute('aria-pressed', 'false'); });
       sw.setAttribute('aria-pressed', 'true');
       updatePersonalizeLink();
