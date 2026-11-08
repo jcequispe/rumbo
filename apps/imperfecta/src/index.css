@@ -1,0 +1,78 @@
+:root {
+  /* Paleta medida sobre la referencia: crema de fondo, coral vivo en
+     los CTA, panel navy oscuro — no el dorado apagado que tenía antes. */
+  --bg: #f7f1ea;
+  --bg-alt: #f0e6d8;
+  --surface: #ffffff;
+  --fg: #22232a;
+  --fg-dim: #5c5a66;
+  --fg-faint: #8a8794;
+  --line: rgba(34, 35, 42, 0.12);
+
+  --accent: #dc5a4a; /* coral vivo — CTA principal, igual que la referencia */
+  --accent-soft: #e87d6f;
+  --accent-ink: #fffdfa;
+  --dark: #1f3240; /* panel navy oscuro */
+  --dark-fg: #f7f1ea;
+
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-body: 'Manrope', system-ui, sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  /* Deja sitio a la barra fija del selector de variantes (ver
+     VariantSwitcher) — solo para esta revisión interna, no es parte
+     del diseño final de ninguna de las 3 propuestas. */
+  padding-top: 32px;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  margin: 0;
+  color: var(--fg);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

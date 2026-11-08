@@ -30,3 +30,14 @@ If you are developing a production application, we recommend enabling type-aware
 ```
 
 See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+
+## Variantes de landing (selector superior)
+
+`/rumbo/` (esta app), `/rumbo/agenda-aurea/` (HTML estático en `public/`), `/rumbo/imperfecta/` y `/rumbo/conversion/`.
+El código de las dos últimas vive en `apps/` y se publica ya compilado en `public/<slug>/`:
+
+```bash
+./scripts/build-variants.sh   # reconstruye apps/* → public/*, luego commit
+```
+
+Su contenido (textos, precios, WhatsApp, imágenes) viene en runtime del repo `agenda-aurea-content`.
