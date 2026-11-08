@@ -1,10 +1,11 @@
 // Barra de revisión interna — NO es parte del diseño final de ninguna
-// variante. Deja elegir entre las 3 propuestas de landing page desde
-// cualquiera de ellas. Mismo componente (adaptado) en las 3 apps.
+// variante. Deja elegir entre las 4 propuestas de landing page desde
+// cualquiera de ellas. Mismo componente (adaptado) en las 4 apps.
 const VARIANTS = [
   { path: '/rumbo/', label: 'Rumbo — cinemático' },
   { path: '/rumbo/agenda-aurea/', label: 'Agenda Áurea — ledger' },
   { path: '/rumbo/imperfecta/', label: 'Imperfecta — dorado' },
+  { path: '/rumbo/conversion/', label: 'Conversión — Imperfecta+' },
 ]
 
 export default function VariantSwitcher() {
