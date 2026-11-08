@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { TierNudge } from '../components/Experience'
 import { useContent } from '../content/ContentProvider'
 import { useCart } from './CartProvider'
 
@@ -90,6 +91,7 @@ export function CartDrawer() {
 
             <footer className="cart-foot">
               {c.atMax && <p className="cart-max">{cart.max.replace('{max}', String(content.pricing.maxQty))}</p>}
+              <TierNudge />
               {c.saved > 0 && <p className="cart-savings">{cart.savings.replace('{amount}', c.money(c.saved))}</p>}
               <p className="cart-total">
                 <span>
