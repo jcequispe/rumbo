@@ -1,27 +1,10 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useCart } from '../cart/CartProvider'
 import { useContent } from '../content/ContentProvider'
+import { useSelection } from '../selection'
+import { ScrollProgress, TierNudge, usePerDay } from './Experience'
 
-interface Selection {
-  editionId: string
-  setEditionId: (id: string) => void
-  formatId: string
-  setFormatId: (id: string) => void
-}
-const SelectionContext = createContext<Selection | null>(null)
-
-export function SelectionProvider({ children }: { children: ReactNode }) {
-  const { content } = useContent()
-  const [editionId, setEditionId] = useState(content.editions[0].id)
-  const [formatId, setFormatId] = useState(content.formats.items[0].id)
-  return <SelectionContext.Provider value={{ editionId, setEditionId, formatId, setFormatId }}>{children}</SelectionContext.Provider>
-}
-
-function useSelection() {
-  const s = useContext(SelectionContext)
-  if (!s) throw new Error('useSelection fuera de <SelectionProvider>')
-  return s
-}
+export { SelectionProvider } from '../selection'
 
 export function useReveal() {
   useEffect(() => {
@@ -89,6 +72,7 @@ export function Nav() {
           )}
         </button>
       </div>
+      <ScrollProgress />
     </header>
   )
 }
@@ -97,8 +81,23 @@ function minPerUnit(tiers: { qty: number; total: number; perUnit?: number }[]) {
   return Math.min(...tiers.map((t) => t.perUnit ?? t.total / t.qty))
 }
 
+function Words({ text, from = 0, accent = false }: { text: string; from?: number; accent?: boolean }) {
+  const Tag = accent ? 'em' : 'span'
+  return (
+    <Tag>
+      {text.split(' ').map((w, i) => (
+        <span className="word" style={{ ['--i' as string]: from + i }} key={i}>
+          {w}
+          {'\u00a0'}
+        </span>
+      ))}
+    </Tag>
+  )
+}
+
 export function Hero() {
   const { content, media } = useContent()
+  const { editionId, setEditionId } = useSelection()
   const { hero, pricing, ui } = content
   const from = `${pricing.currency} ${minPerUnit(pricing.tiers)}`
   return (
@@ -106,8 +105,11 @@ export function Hero() {
       <div className="container hero-grid">
         <div className="hero-copy">
           <Eyebrow>{hero.eyebrow}</Eyebrow>
-          <h1>
-            {hero.title} <em>{hero.titleAccent}</em>
+          <h1 aria-label={`${hero.title} ${hero.titleAccent}`}>
+            <span aria-hidden="true">
+              <Words text={hero.title} />
+              <Words text={hero.titleAccent} from={hero.title.split(' ').length} accent />
+            </span>
           </h1>
           <p className="lead">{hero.sub}</p>
           <div className="hero-actions">
@@ -119,6 +121,22 @@ export function Hero() {
             </a>
           </div>
           <p className="hero-price">{ui.fromPrice.replace('{price}', from)}</p>
+          <div className="hero-pick">
+            <span className="field-label">{ui.heroPick}</span>
+            <div className="hero-dots">
+              {content.editions.map((e) => (
+                <a
+                  key={e.id}
+                  href="#elige"
+                  className="hero-dot"
+                  style={{ background: e.color }}
+                  aria-label={ui.pickOne.replace('{label}', e.label)}
+                  aria-current={e.id === editionId ? 'true' : undefined}
+                  onClick={() => setEditionId(e.id)}
+                />
+              ))}
+            </div>
+          </div>
           {hero.chips && (
             <ul className="chips" aria-label="Características">
               {hero.chips.map((c) => (
@@ -192,8 +210,32 @@ export function EditionPicker() {
   const c = useCart()
   const active = editions.find((e) => e.id === editionId) ?? editions[0]
   const inCart = c.lines.filter((l) => l.editionId === active.id).reduce((n, l) => n + l.qty, 0)
+  const perDay = usePerDay()
+  const stage = useRef<HTMLDivElement>(null)
+  const tilt = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = stage.current
+    if (!el || e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const r = el.getBoundingClientRect()
+    const x = (e.clientX - r.left) / r.width - 0.5
+    const y = (e.clientY - r.top) / r.height - 0.5
+    el.style.setProperty('--rx', `${(-y * 6).toFixed(2)}deg`)
+    el.style.setProperty('--ry', `${(x * 8).toFixed(2)}deg`)
+  }
+  const untilt = () => {
+    stage.current?.style.setProperty('--rx', '0deg')
+    stage.current?.style.setProperty('--ry', '0deg')
+  }
+  const arrows = (e: React.KeyboardEvent) => {
+    const i = editions.findIndex((x) => x.id === active.id)
+    const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0
+    if (!d) return
+    e.preventDefault()
+    const n = editions[(i + d + editions.length) % editions.length]
+    setEditionId(n.id)
+    requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-edition="${n.id}"]`)?.focus())
+  }
   return (
-    <section className="section section-tint" id="elige">
+    <section className="section section-tint picker" id="elige">
       <div className="container">
         <div className="section-head reveal">
           <Eyebrow>{editionsSection.eyebrow}</Eyebrow>
@@ -201,7 +243,7 @@ export function EditionPicker() {
           <p className="lead">{editionsSection.sub}</p>
         </div>
         <div className="edition-layout reveal">
-          <div className="edition-stage">
+          <div className="edition-stage" ref={stage} onPointerMove={tilt} onPointerLeave={untilt}>
             <img key={active.id} src={media(active.image)} alt={`Portada ${active.label}`} width={1024} height={640} />
             <span className="edition-badge" style={{ background: active.color }} aria-hidden="true" />
           </div>
@@ -209,9 +251,9 @@ export function EditionPicker() {
             <h3 className="edition-name" aria-live="polite">
               {active.label}
             </h3>
-            <div className="swatches" role="group" aria-label={editionsSection.title}>
+            <div className="swatches" role="group" aria-label={editionsSection.title} onKeyDown={arrows}>
               {editions.map((e) => (
-                <button type="button" key={e.id} className="swatch" aria-pressed={e.id === active.id} onClick={() => setEditionId(e.id)}>
+                <button type="button" key={e.id} data-edition={e.id} className="swatch" aria-pressed={e.id === active.id} onClick={() => setEditionId(e.id)}>
                   <span className="swatch-dot" style={{ background: e.color }} />
                   <span className="swatch-label">{e.label}</span>
                 </button>
@@ -233,6 +275,15 @@ export function EditionPicker() {
               {inCart > 0 && <span className="btn-count">{inCart}</span>}
             </button>
             {c.atMax && <p className="fine">{cart.max.replace('{max}', String(content.pricing.maxQty))}</p>}
+            <p className="per-day">{perDay}</p>
+            <TierNudge />
+            {editionsSection.reassure && (
+              <ul className="reassure">
+                {editionsSection.reassure.map((r) => (
+                  <li key={r}>{r}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>
@@ -272,6 +323,7 @@ export function Details() {
 
 export function Proof() {
   const { proof } = useContent().content
+  if (!proof.verified) return null // sin reseñas reales y autorizadas, no se muestra nada
   return (
     <section className="section section-tint">
       <div className="container">
@@ -537,6 +589,8 @@ export function Footer() {
 
 export function StickyBar() {
   const { content } = useContent()
+  const { editionId } = useSelection()
+  const color = content.editions.find((e) => e.id === editionId)?.color
   const c = useCart()
   const [show, setShow] = useState(false)
 
@@ -563,6 +617,7 @@ export function StickyBar() {
         </button>
       ) : (
         <a className="btn btn-primary" href="#elige" tabIndex={show ? 0 : -1}>
+          <span className="sticky-dot" style={{ background: color }} aria-hidden="true" />
           {content.ui.stickyCta}
         </a>
       )}

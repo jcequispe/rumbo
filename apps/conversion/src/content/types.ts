@@ -1,4 +1,4 @@
-export interface Edition { id: string; label: string; color: string; image: string }
+export interface Edition { id: string; label: string; color: string; image: string; tags?: string[] }
 export interface Tier { qty: number; total: number; perUnit?: number; note?: string }
 
 export interface Content {
@@ -21,7 +21,7 @@ export interface Content {
   }
   problem: { eyebrow: string; title: string; body: string; points: string[] }
   benefits: { eyebrow: string; title: string; items: { title: string; body: string; image: string }[] }
-  editionsSection: { eyebrow: string; title: string; sub: string; cta: string }
+  editionsSection: { eyebrow: string; title: string; sub: string; cta: string; reassure?: string[] }
   editions: Edition[]
   formats: { eyebrow: string; title: string; body: string; image: string; items: { id: string; name: string; detail: string }[] }
   details: {
@@ -32,11 +32,39 @@ export interface Content {
     size: string
   }
   proof: {
+    verified?: boolean
     eyebrow: string
     title: string
     stat: string
     statText: string
     testimonials: { quote: string; name: string; place?: string; tag?: string }[]
+  }
+  demo: {
+    eyebrow: string
+    title: string
+    sub: string
+    note: string
+    weekLabel: string
+    days: string[]
+    daysLong: string[]
+    states: { empty: string; done: string; rest: string }
+    habitsLabel: string
+    habits: string[]
+    ringLabel: string
+    messages: { zero: string; some: string; most: string; all: string }
+    cta: string
+    reset: string
+  }
+  finder: {
+    eyebrow: string
+    title: string
+    sub: string
+    step: string
+    questions: { q: string; options: { label: string; tags: string[] }[] }[]
+    resultEyebrow: string
+    resultCta: string
+    alsoLike: string
+    restart: string
   }
   steps: { eyebrow: string; title: string; items: { title: string; body: string }[] }
   pricing: {
@@ -96,6 +124,13 @@ export interface Content {
     hoursShort: string
     minutesShort: string
     whatsappCta: string
+    perDay: string
+    nudge: string
+    nudgeSave: string
+    nudgeBest: string
+    heroPick: string
+    chosen: string
+    pickOne: string
   }
   footer: { links: string[]; legal: string; address: string }
 }

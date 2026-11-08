@@ -18,6 +18,7 @@ import {
   Unboxing,
   useReveal,
 } from './components/Sections'
+import { Demo, Finder } from './components/Experience'
 import { CartDrawer, CartToast } from './cart/CartDrawer'
 import { CartProvider } from './cart/CartProvider'
 import { ContentProvider } from './content/ContentProvider'
@@ -31,7 +32,9 @@ function Landing() {
       <main>
         <Hero />
         <Problem />
+        <Demo />
         <Benefits />
+        <Finder />
         <EditionPicker />
         <Details />
         <Proof />
