@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useContent } from '../content/ContentProvider'
-import { bestTotal, savings as calcSavings } from './pricing'
+import { bestTotal, formatMoney, savings as calcSavings } from './pricing'
 
 export interface Line {
   editionId: string
@@ -109,7 +109,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const remove = useCallback((editionId: string, formatId: string) => setLines((prev) => prev.filter((l) => !same(l, editionId, formatId))), [])
 
-  const money = useCallback((n: number) => `${pricing.currency} ${n}`, [pricing.currency])
+  const money = useCallback((n: number) => `${pricing.currency} ${formatMoney(n)}`, [pricing.currency])
   const unitLabel = useCallback((n: number) => (n === 1 ? pricing.unitOne : pricing.unitMany), [pricing.unitOne, pricing.unitMany])
 
   const checkoutHref = useMemo(() => {

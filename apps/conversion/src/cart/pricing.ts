@@ -19,3 +19,9 @@ export function unitPrice(tiers: Tier[]): number {
 export function savings(tiers: Tier[], n: number): number {
   return Math.max(0, unitPrice(tiers) * n - bestTotal(tiers, n))
 }
+
+/** Redondea a centavos y formatea sin arrastrar imprecisión de punto flotante (p.ej. 4.420000000000002 → "4.42"). */
+export function formatMoney(n: number): string {
+  const cents = Math.round(n * 100) / 100
+  return Number.isInteger(cents) ? String(cents) : cents.toFixed(2)
+}
