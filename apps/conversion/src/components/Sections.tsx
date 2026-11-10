@@ -41,8 +41,9 @@ export function TopBanner() {
 function CartIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M6 7h12l-1 12a2 2 0 0 1-2 1.8H9A2 2 0 0 1 7 19L6 7Z" />
-      <path d="M9 7a3 3 0 0 1 6 0" />
+      <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="20" r="1.4" fill="currentColor" stroke="none" />
+      <path d="M2.5 3h2.6l2.1 12.1a2 2 0 0 0 2 1.65h8.47a2 2 0 0 0 1.97-1.64L21 8H6.1" />
     </svg>
   )
 }
