@@ -1547,6 +1547,17 @@ html.no-scroll {
   min-height: 1.2em;
   font-size: 1.05rem;
 }
+
+.demo-day.s0 .demo-day-s {
+  opacity: 0.3;
+  font-weight: 400;
+  transition: opacity 0.2s var(--ease);
+}
+
+.demo-day.s0:hover .demo-day-s,
+.demo-day.s0:focus-visible .demo-day-s {
+  opacity: 0.6;
+}
 .demo-legend {
   display: flex;
   flex-wrap: wrap;
