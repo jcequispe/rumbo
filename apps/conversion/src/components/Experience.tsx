@@ -93,7 +93,11 @@ export function Demo() {
   const touched = moving > 0 || habits.some((r) => r.some(Boolean))
 
   const cycle = (i: number) => setDays((p) => p.map((d, k) => (k === i ? (((d + 1) % 3) as DayState) : d)))
-  const toggle = (r: number, d: number) => setHabits((p) => p.map((row, k) => (k === r ? row.map((v, j) => (j === d ? !v : v)) : row)))
+  const toggle = (r: number, d: number) => {
+    setHabits((p) => p.map((row, k) => (k === r ? row.map((v, j) => (j === d ? !v : v)) : row)))
+    // Marcar un hábito también mueve el día: lo que repites es, literalmente, lo que cuenta.
+    setDays((p) => p.map((v, k) => (k === d && v === 0 && !habits[r][d] ? 1 : v)))
+  }
   const reset = () => {
     setDays(Array(7).fill(0))
     setHabits(demo.habits.map(() => Array(7).fill(false)))
@@ -122,7 +126,7 @@ export function Demo() {
                 >
                   <span className="demo-day-l">{d}</span>
                   <span className="demo-day-s" aria-hidden="true">
-                    {days[i] === 1 ? '✓' : days[i] === 2 ? '☾' : ''}
+                    {days[i] === 1 ? '✓' : days[i] === 2 ? '☾' : '+'}
                   </span>
                 </button>
               ))}
