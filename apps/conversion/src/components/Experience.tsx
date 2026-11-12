@@ -1,6 +1,57 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useCart } from '../cart/CartProvider'
 import { useContent } from '../content/ContentProvider'
+import { gsap } from '../scroll'
+
+/* ---------- Titular "escrito a pluma" ----------
+   El h1 se revela con un trazo dorado, como si la pluma de sus propias
+   fotos lo escribiera: clip-path de izquierda a derecha + un nib que viaja
+   sobre el texto. Con prefers-reduced-motion aparece completo, sin animar
+   (el texto real está siempre en el DOM, nunca se oculta del lector de
+   pantalla). Ver PLAN-3D.md, pieza 1. */
+export function PenWrittenTitle({ title, accent }: { title: string; accent: string }) {
+  const titleRef = useRef<HTMLSpanElement>(null)
+  const accentRef = useRef<HTMLSpanElement>(null)
+  const nibRef = useRef<HTMLSpanElement>(null)
+
+  useLayoutEffect(() => {
+    const lines = [titleRef.current, accentRef.current].filter((e): e is HTMLSpanElement => !!e)
+    const nib = nibRef.current
+    if (!lines.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    gsap.set(lines, { clipPath: 'inset(0 100% 0 0)' })
+    if (nib) gsap.set(nib, { opacity: 0 })
+
+    const tl = gsap.timeline({ delay: 0.2 })
+    lines.forEach((el, i) => {
+      const w = el.getBoundingClientRect().width
+      const h = el.getBoundingClientRect().height
+      if (nib) {
+        tl.set(nib, { x: 0, y: h * 0.78, opacity: 1 }, i === 0 ? 0 : undefined)
+        tl.to(nib, { x: w * 0.5, duration: 0.45, ease: 'power1.in' }, '<')
+        tl.to(nib, { x: w + 4, duration: 0.45, ease: 'power1.out' }, '<0.45')
+      }
+      tl.to(el, { clipPath: 'inset(0 0% 0 0)', duration: 0.9, ease: 'power2.inOut' }, i === 0 ? 0 : '-=0.15')
+    })
+    if (nib) tl.to(nib, { opacity: 0, duration: 0.25 })
+
+    return () => {
+      tl.kill()
+    }
+  }, [title, accent])
+
+  return (
+    <h1 aria-label={`${title} ${accent}`}>
+      <span className="pen-line" ref={titleRef}>
+        {title}
+      </span>
+      <em className="pen-line" ref={accentRef}>
+        {accent}
+      </em>
+      <span className="pen-nib" ref={nibRef} aria-hidden="true" />
+    </h1>
+  )
+}
 
 /* ---------- Progreso de lectura (orientación en el scroll) ---------- */
 export function ScrollProgress() {

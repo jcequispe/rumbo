@@ -1439,19 +1439,27 @@ html.no-scroll {
   transition: background 0.5s var(--ease);
 }
 
-/* Titular del hero: entrada palabra a palabra */
-.hero h1 .word {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(0.45em);
-  animation: word-in 0.75s var(--ease) forwards;
-  animation-delay: calc(var(--i, 0) * 70ms + 80ms);
+/* Titular del hero: "escrito a pluma" — ver PLAN-3D.md pieza 1.
+   .pen-line fuerza 2 líneas predecibles (título / acento) para que el
+   trazo de GSAP sepa el ancho exacto de cada una. */
+.hero h1 .pen-line {
+  display: block;
 }
-@keyframes word-in {
-  to {
-    opacity: 1;
-    transform: none;
-  }
+.hero h1 {
+  position: relative;
+}
+.pen-nib {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  margin-left: -2px;
+  border-radius: 2px 2px 2px 0;
+  background: var(--gold);
+  box-shadow: 0 0 10px 1px color-mix(in srgb, var(--gold) 70%, transparent);
+  pointer-events: none;
+  will-change: transform, opacity;
 }
 
 /* Selector rápido de color en el hero */
@@ -1907,10 +1915,11 @@ html.no-scroll {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero h1 .word {
-    opacity: 1;
-    transform: none;
-    animation: none;
+  .hero h1 .pen-line {
+    clip-path: none !important;
+  }
+  .pen-nib {
+    display: none;
   }
   .edition-stage {
     transform: none;
@@ -1940,5 +1949,35 @@ html.no-scroll {
   }
   .demo-days {
     gap: 4px;
+  }
+}
+
+/* ---------- Atmósfera compartida (una sola capa, montada en App) ----------
+   Luz dorada muy tenue que respira lentamente detrás de todo el contenido.
+   Nunca compite con el texto: opacidad baja, sin bordes duros. Ver PLAN-3D.md. */
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 45% at 18% 8%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 70%),
+    radial-gradient(50% 40% at 85% 65%, color-mix(in srgb, var(--gold) 12%, transparent), transparent 70%);
+  animation: atmosphere-breathe 22s ease-in-out infinite;
+}
+@keyframes atmosphere-breathe {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate3d(1%, -1.5%, 0) scale(1.04);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere {
+    animation: none;
   }
 }
