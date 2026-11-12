@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useCart } from '../cart/CartProvider'
 import { useContent } from '../content/ContentProvider'
 import { useSelection } from '../selection'
-import { PenWrittenTitle, ScrollProgress, TierNudge, usePerDay } from './Experience'
+import { InteriorScrub, PenWrittenTitle, ScrollProgress, TierNudge, usePerDay } from './Experience'
 
 export { SelectionProvider } from '../selection'
 
@@ -288,7 +288,11 @@ export function Details() {
     <section className="section" id="detalles">
       <div className="container details-grid">
         <div className="details-media reveal">
-          <img src={media(details.image)} alt="" loading="lazy" width={800} height={800} />
+          {details.video ? (
+            <InteriorScrub src={media(details.video)} poster={media(details.image)} />
+          ) : (
+            <img src={media(details.image)} alt="" loading="lazy" width={800} height={800} />
+          )}
         </div>
         <div className="reveal">
           <Eyebrow>{details.eyebrow}</Eyebrow>

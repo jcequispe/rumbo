@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useCart } from '../cart/CartProvider'
 import { useContent } from '../content/ContentProvider'
-import { gsap } from '../scroll'
+import { gsap, ScrollTrigger } from '../scroll'
 
 /* ---------- Titular "escrito a pluma" ----------
    El h1 se revela con un trazo dorado, como si la pluma de sus propias
@@ -50,6 +50,52 @@ export function PenWrittenTitle({ title, accent }: { title: string; accent: stri
       </em>
       <span className="pen-nib" ref={nibRef} aria-hidden="true" />
     </h1>
+  )
+}
+
+/* ---------- "Por dentro": hojeada real controlada por scroll ----------
+   Un <video> normal (sin WebGL) cuyo currentTime lo fija el scroll dentro
+   de una sección fijada ("pinned"): se siente 3D sin serlo. Con
+   prefers-reduced-motion la sección no se fija y el video simplemente se
+   reproduce solo una vez (o se ve el poster si falla el autoplay). Ver
+   PLAN-3D.md, pieza 2. */
+export function InteriorScrub({ src, poster }: { src: string; poster: string }) {
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current
+    const video = videoRef.current
+    if (!wrap || !video || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    let ready = false
+    const onLoaded = () => {
+      ready = true
+      video.pause()
+    }
+    video.addEventListener('loadedmetadata', onLoaded)
+
+    const st = ScrollTrigger.create({
+      trigger: wrap,
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: 0.6,
+      onUpdate: (self) => {
+        if (!ready || !video.duration) return
+        video.currentTime = self.progress * video.duration
+      },
+    })
+
+    return () => {
+      video.removeEventListener('loadedmetadata', onLoaded)
+      st.kill()
+    }
+  }, [])
+
+  return (
+    <div className="interior-scrub" ref={wrapRef}>
+      <video ref={videoRef} src={src} poster={poster} muted playsInline preload="auto" autoPlay={matchMedia('(prefers-reduced-motion: reduce)').matches} loop={matchMedia('(prefers-reduced-motion: reduce)').matches} />
+    </div>
   )
 }
 
