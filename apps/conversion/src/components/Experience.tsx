@@ -121,7 +121,7 @@ export function TransformSequence({ before, after }: { before: string[]; after: 
     const checkPath = wrap.querySelector<SVGPathElement>('.t-check path')
 
     gsap.set(beforeItems, { opacity: 0, y: 10 })
-    gsap.set(strikes, { scaleX: 0 })
+    gsap.set(strikes, { opacity: 0 })
     if (afterEl) gsap.set(afterEl, { opacity: 0, y: 10 })
     if (checkPath) {
       const len = checkPath.getTotalLength()
@@ -131,7 +131,7 @@ export function TransformSequence({ before, after }: { before: string[]; after: 
     const tl = gsap.timeline()
     beforeItems.forEach((el, i) => {
       tl.to(el, { opacity: 1, y: 0, duration: 0.3 }, i * 0.18)
-      tl.to(el.querySelector('.t-strike'), { scaleX: 1, duration: 0.25 }, i * 0.18 + 0.2)
+      tl.to(el.querySelector('.t-strike'), { opacity: 1, duration: 0.25 }, i * 0.18 + 0.2)
     })
     const afterStart = beforeItems.length * 0.18 + 0.3
     if (afterEl) tl.to(afterEl, { opacity: 1, y: 0, duration: 0.35 }, afterStart)
@@ -159,7 +159,9 @@ export function TransformSequence({ before, after }: { before: string[]; after: 
             </span>
             <span className="t-text">
               {p}
-              <i className="t-strike" aria-hidden="true" />
+              <span className="t-strike" aria-hidden="true">
+                {p}
+              </span>
             </span>
           </li>
         ))}
