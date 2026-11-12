@@ -1,9 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useCart } from '../cart/CartProvider'
 import { useContent } from '../content/ContentProvider'
-import { useSelection } from '../selection'
-
-const reduceMotion = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /* ---------- Progreso de lectura (orientación en el scroll) ---------- */
 export function ScrollProgress() {
@@ -186,105 +183,6 @@ export function Demo() {
           </div>
         </div>
         <p className="fine demo-note reveal">{demo.note}</p>
-      </div>
-    </section>
-  )
-}
-
-/* ---------- Test «Encuentra tu portada» ---------- */
-export function Finder() {
-  const { content, media } = useContent()
-  const { finder, editions } = content
-  const { setEditionId } = useSelection()
-  const [step, setStep] = useState(0)
-  const [tags, setTags] = useState<string[]>([])
-  const [done, setDone] = useState(false)
-  const headRef = useRef<HTMLHeadingElement>(null)
-  const total = finder.questions.length
-
-  const ranked = useMemo(() => {
-    const score = (e: (typeof editions)[number]) => (e.tags ?? []).reduce((n, t) => n + tags.filter((x) => x === t).length, 0)
-    return editions.map((e, i) => ({ e, i, s: score(e) })).sort((a, b) => b.s - a.s || a.i - b.i)
-  }, [editions, tags])
-
-  useEffect(() => {
-    if (done) headRef.current?.focus({ preventScroll: true })
-  }, [done])
-
-  const answer = (t: string[]) => {
-    const next = [...tags, ...t]
-    setTags(next)
-    if (step + 1 >= total) setDone(true)
-    else setStep(step + 1)
-  }
-  const restart = () => {
-    setStep(0)
-    setTags([])
-    setDone(false)
-  }
-  const choose = (id: string) => {
-    setEditionId(id)
-    document.getElementById('elige')?.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth' })
-  }
-  const top = ranked[0].e
-  const q = finder.questions[step]
-
-  return (
-    <section className="section finder" id="encuentra">
-      <div className="container narrow">
-        <div className="section-head reveal">
-          <p className="eyebrow">{finder.eyebrow}</p>
-          <h2>{finder.title}</h2>
-          <p className="lead">{finder.sub}</p>
-        </div>
-        <div className="finder-card reveal">
-          {!done ? (
-            <div key={step} className="finder-step">
-              <div className="finder-progress" aria-hidden="true">
-                {finder.questions.map((_, i) => (
-                  <span key={i} className={i <= step ? 'on' : ''} />
-                ))}
-              </div>
-              <p className="finder-count">{finder.step.replace('{n}', String(step + 1)).replace('{total}', String(total))}</p>
-              <h3 className="finder-q">{q.q}</h3>
-              <div className="finder-options">
-                {q.options.map((o) => (
-                  <button type="button" key={o.label} className="finder-option" onClick={() => answer(o.tags)}>
-                    {o.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="finder-result" aria-live="polite">
-              <p className="eyebrow">{finder.resultEyebrow}</p>
-              <div className="finder-hit">
-                <img src={media(top.image)} alt={`Portada ${top.label}`} width={1024} height={640} loading="lazy" />
-                <div>
-                  <h3 tabIndex={-1} ref={headRef}>
-                    {top.label}
-                  </h3>
-                  <span className="finder-swatch" style={{ background: top.color }} aria-hidden="true" />
-                  <button type="button" className="btn btn-primary" onClick={() => choose(top.id)}>
-                    {finder.resultCta.replace('{label}', top.label)}
-                  </button>
-                </div>
-              </div>
-              <p className="field-label">{finder.alsoLike}</p>
-              <div className="finder-also">
-                {ranked.slice(1, 3).map(({ e }) => (
-                  <button type="button" key={e.id} className="swatch" onClick={() => choose(e.id)}>
-                    <span className="swatch-dot" style={{ background: e.color }} />
-                    <span className="swatch-label">{e.label}</span>
-                  </button>
-                ))}
-              </div>
-              <button type="button" className="text-btn" onClick={restart}>
-                {finder.restart}
-              </button>
-            </div>
-          )}
-        </div>
       </div>
     </section>
   )

@@ -49,13 +49,13 @@ function CartIcon() {
 }
 
 export function Nav() {
-  const { content } = useContent()
+  const { content, media } = useContent()
   const cart = useCart()
   return (
     <header className="nav">
       <div className="container nav-inner">
         <a className="nav-wordmark" href="#inicio" aria-label={content.brand.wordmark}>
-          {content.brand.wordmark}
+          {content.brand.logo ? <img src={media(content.brand.logo)} alt={content.brand.wordmark} className="nav-logo" /> : content.brand.wordmark}
         </a>
         <nav className="nav-links" aria-label="Principal">
           {content.nav.links.map((l) => (
@@ -122,6 +122,7 @@ export function Hero() {
             </a>
           </div>
           <p className="hero-price">{ui.fromPrice.replace('{price}', from)}</p>
+          {content.editions.length > 1 && (
           <div className="hero-pick">
             <span className="field-label">{ui.heroPick}</span>
             <div className="hero-dots">
@@ -138,6 +139,7 @@ export function Hero() {
               ))}
             </div>
           </div>
+          )}
           {hero.chips && (
             <ul className="chips" aria-label="Características">
               {hero.chips.map((c) => (
@@ -252,25 +254,31 @@ export function EditionPicker() {
             <h3 className="edition-name" aria-live="polite">
               {active.label}
             </h3>
-            <div className="swatches" role="group" aria-label={editionsSection.title} onKeyDown={arrows}>
-              {editions.map((e) => (
-                <button type="button" key={e.id} data-edition={e.id} className="swatch" aria-pressed={e.id === active.id} onClick={() => setEditionId(e.id)}>
-                  <span className="swatch-dot" style={{ background: e.color }} />
-                  <span className="swatch-label">{e.label}</span>
-                </button>
-              ))}
-            </div>
-            <p className="field-label" id="format-label">
-              {formats.eyebrow}
-            </p>
-            <div className="format-tabs" role="group" aria-labelledby="format-label">
-              {formats.items.map((f) => (
-                <button type="button" key={f.id} className="format-tab" aria-pressed={f.id === formatId} onClick={() => setFormatId(f.id)}>
-                  <strong>{f.name}</strong>
-                  <span>{f.detail}</span>
-                </button>
-              ))}
-            </div>
+            {editions.length > 1 && (
+              <div className="swatches" role="group" aria-label={editionsSection.title} onKeyDown={arrows}>
+                {editions.map((e) => (
+                  <button type="button" key={e.id} data-edition={e.id} className="swatch" aria-pressed={e.id === active.id} onClick={() => setEditionId(e.id)}>
+                    <span className="swatch-dot" style={{ background: e.color }} />
+                    <span className="swatch-label">{e.label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            {formats.items.length > 1 && (
+              <>
+                <p className="field-label" id="format-label">
+                  {formats.eyebrow}
+                </p>
+                <div className="format-tabs" role="group" aria-labelledby="format-label">
+                  {formats.items.map((f) => (
+                    <button type="button" key={f.id} className="format-tab" aria-pressed={f.id === formatId} onClick={() => setFormatId(f.id)}>
+                      <strong>{f.name}</strong>
+                      <span>{f.detail}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
             <button type="button" className="btn btn-primary btn-large btn-block" onClick={() => c.add(active.id, formatId)} disabled={c.atMax}>
               {cart.addCta}
               {inCart > 0 && <span className="btn-count">{inCart}</span>}
@@ -478,6 +486,7 @@ export function Pricing() {
           <p className="fine fine-light">{pricing.payNote}</p>
         </div>
 
+        {gift && (
         <div className="gift reveal">
           <img src={media(gift.image)} alt="" loading="lazy" width={480} height={480} />
           <div>
@@ -486,6 +495,7 @@ export function Pricing() {
             <p>{gift.note}</p>
           </div>
         </div>
+        )}
 
         <div className="guarantee reveal">
           <h3>{guarantee.title}</h3>

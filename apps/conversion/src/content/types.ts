@@ -4,7 +4,7 @@ export interface Tier { qty: number; total: number; perUnit?: number; note?: str
 export interface Content {
   version: 1
   site: string
-  brand: { wordmark: string; email: string }
+  brand: { wordmark: string; email: string; logo?: string }
   whatsapp: { number: string }
   topBanner?: string
   nav: { links: { label: string; href: string }[] }
@@ -55,7 +55,7 @@ export interface Content {
     cta: string
     reset: string
   }
-  finder: {
+  finder?: {
     eyebrow: string
     title: string
     sub: string
@@ -85,7 +85,7 @@ export interface Content {
     mixNote: string
     payNote: string
   }
-  gift: { tag: string; title: string; note: string; image: string }
+  gift?: { tag: string; title: string; note: string; image: string }
   unboxing: { title: string; body: string; image: string }
   guarantee: { title: string; body: string }
   faq: { q: string; a: string }[]
