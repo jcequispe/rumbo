@@ -28,6 +28,7 @@ export interface Content {
     eyebrow: string
     title: string
     image: string
+    video?: string
     materials: { label: string; detail: string }[]
     size: string
   }
