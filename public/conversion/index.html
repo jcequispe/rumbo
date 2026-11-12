@@ -16,10 +16,33 @@
       href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <script>
+      // Si el navegador cargó un index.html viejo (en caché) que apunta a un
+      // archivo .js/.css con hash de un despliegue anterior ya borrado, esa
+      // etiqueta falla y la página queda en blanco sin ningún error visible.
+      // Se recarga UNA sola vez (forzando bypass de caché) para traer el
+      // index.html y los assets actuales; si ya se intentó en esta pestaña,
+      // no insiste (evita un bucle si el problema es otro).
+      window.addEventListener(
+        'error',
+        (e) => {
+          const el = e.target
+          if (!(el instanceof HTMLElement)) return
+          const src = el.getAttribute('src') || el.getAttribute('href') || ''
+          if (!/\/assets\//.test(src)) return
+          if (sessionStorage.getItem('chunk-reload')) return
+          sessionStorage.setItem('chunk-reload', '1')
+          location.reload()
+        },
+        true,
+      )
+    </script>
     <script type="module" crossorigin src="/rumbo/conversion/assets/index-V0C5E0Kk.js"></script>
     <link rel="stylesheet" crossorigin href="/rumbo/conversion/assets/index-B0_YYxyQ.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div style="min-height: 60vh; display: grid; place-content: center; color: #7a6448; font-family: system-ui, sans-serif">Cargando…</div>
+    </div>
   </body>
 </html>
