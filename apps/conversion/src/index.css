@@ -1019,18 +1019,18 @@ a {
 
 .t-before .t-text {
   position: relative;
+  display: inline-block;
   color: var(--fg-dim);
 }
 
 .t-strike {
   position: absolute;
-  left: 0;
-  top: 50%;
-  width: 100%;
-  height: 1.5px;
-  background: var(--gold);
-  transform-origin: left center;
-  transform: scaleX(1);
+  inset: 0;
+  color: transparent;
+  text-decoration: line-through;
+  text-decoration-color: var(--gold);
+  text-decoration-thickness: 1.5px;
+  pointer-events: none;
 }
 
 .t-after {
@@ -1042,7 +1042,7 @@ a {
 
 @media (prefers-reduced-motion: reduce) {
   .t-strike {
-    transform: scaleX(1);
+    opacity: 1;
   }
 }
 
