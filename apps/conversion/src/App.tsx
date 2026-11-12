@@ -22,9 +22,12 @@ import { Demo } from './components/Experience'
 import { CartDrawer, CartToast } from './cart/CartDrawer'
 import { CartProvider } from './cart/CartProvider'
 import { ContentProvider } from './content/ContentProvider'
+import Atmosphere from './components/Atmosphere'
+import { useScrollEngine } from './scroll'
 
 function Landing() {
   useReveal()
+  useScrollEngine()
   return (
     <SelectionProvider>
       <TopBanner />
@@ -52,6 +55,7 @@ function Landing() {
 export default function App() {
   return (
     <>
+      <Atmosphere />
       <VariantSwitcher />
       <ContentProvider>
         <CartProvider>

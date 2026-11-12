@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useCart } from '../cart/CartProvider'
 import { useContent } from '../content/ContentProvider'
 import { useSelection } from '../selection'
-import { ScrollProgress, TierNudge, usePerDay } from './Experience'
+import { PenWrittenTitle, ScrollProgress, TierNudge, usePerDay } from './Experience'
 
 export { SelectionProvider } from '../selection'
 
@@ -82,20 +82,6 @@ function minPerUnit(tiers: { qty: number; total: number; perUnit?: number }[]) {
   return Math.min(...tiers.map((t) => t.perUnit ?? t.total / t.qty))
 }
 
-function Words({ text, from = 0, accent = false }: { text: string; from?: number; accent?: boolean }) {
-  const Tag = accent ? 'em' : 'span'
-  return (
-    <Tag>
-      {text.split(' ').map((w, i) => (
-        <span className="word" style={{ ['--i' as string]: from + i }} key={i}>
-          {w}
-          {'\u00a0'}
-        </span>
-      ))}
-    </Tag>
-  )
-}
-
 export function Hero() {
   const { content, media } = useContent()
   const { editionId, setEditionId } = useSelection()
@@ -106,12 +92,7 @@ export function Hero() {
       <div className="container hero-grid">
         <div className="hero-copy">
           <Eyebrow>{hero.eyebrow}</Eyebrow>
-          <h1 aria-label={`${hero.title} ${hero.titleAccent}`}>
-            <span aria-hidden="true">
-              <Words text={hero.title} />
-              <Words text={hero.titleAccent} from={hero.title.split(' ').length} accent />
-            </span>
-          </h1>
+          <PenWrittenTitle title={hero.title} accent={hero.titleAccent} />
           <p className="lead">{hero.sub}</p>
           <div className="hero-actions">
             <a className="btn btn-primary" href="#elige">
