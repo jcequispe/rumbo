@@ -1,21 +1,23 @@
-/* Paleta pensada para conversión:
-   - crema cálida de fondo (cercanía, calma) con texto casi negro (contraste ≥ 12:1)
-   - UN solo color de acción: coral #c8402f (blanco sobre él = 4.9:1, AA) → solo para CTAs
-   - azul marino para secciones de confianza/decisión (problema, precio, cierre)
-   - dorado solo decorativo, nunca como texto sobre claro */
+/* Paleta tomada de la marca real (E·Sencia / Agenda Renacer): dorado y crema,
+   adaptados para una página larga (el tono exacto de las fotos, repetido a
+   pantalla completa, cansa la vista; aquí se suaviza sin perder identidad):
+   - crema cálido de fondo, con texto café oscuro (contraste ≥ 10:1)
+   - UN solo color de acción: el dorado de marca oscurecido para texto en blanco
+     (6.3:1, AA) → solo para CTAs; el dorado tal cual queda para lo decorativo
+   - café espresso (del logo/portada) para secciones de confianza/decisión */
 :root {
-  --bg: #fbf6ef;
-  --tint: #f3e9db;
-  --surface: #ffffff;
-  --fg: #1f2230;
-  --fg-dim: #4f4d5a;
-  --line: rgba(31, 34, 48, 0.14);
-  --action: #c8402f;
-  --action-hover: #a93323;
-  --navy: #1f3240;
-  --navy-fg: #f7f1ea;
-  --navy-dim: #c9d3da;
-  --gold: #c9942f;
+  --bg: #fbf3e8;
+  --tint: #f2e2cb;
+  --surface: #fffdfa;
+  --fg: #4a3115;
+  --fg-dim: #7a6448;
+  --line: rgba(74, 49, 21, 0.16);
+  --action: #7d5a1e;
+  --action-hover: #644711;
+  --navy: #2b1d10;
+  --navy-fg: #f6ead9;
+  --navy-dim: #d9c6ab;
+  --gold: #9c7129;
 
   --font-display: 'Instrument Serif', Georgia, serif;
   --font-body: 'Manrope', system-ui, sans-serif;
@@ -1413,7 +1415,7 @@ html.no-scroll {
    --ed = color de la portada elegida (lo fija selection.tsx)
    ===================================================================== */
 :root {
-  --ed: #c9942f;
+  --ed: #9c7129;
 }
 
 /* Progreso de lectura */
@@ -1925,6 +1927,11 @@ html.no-scroll {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+}
+.nav-logo {
+  height: 34px;
+  width: auto;
+  border-radius: 6px;
 }
 @media (max-width: 859px) {
   .demo-card {
