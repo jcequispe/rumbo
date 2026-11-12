@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useCart } from '../cart/CartProvider'
 import { useContent } from '../content/ContentProvider'
 import { useSelection } from '../selection'
-import { InteriorScrub, PenWrittenTitle, ScrollProgress, TierNudge, usePerDay } from './Experience'
+import { InteriorScrub, PenWrittenTitle, ScrollProgress, TierNudge, TransformSequence, usePerDay } from './Experience'
 
 export { SelectionProvider } from '../selection'
 
@@ -165,7 +165,8 @@ export function Problem() {
 
 export function Benefits() {
   const { content, media } = useContent()
-  const { benefits } = content
+  const { benefits, problem } = content
+  const [first, ...rest] = benefits.items
   return (
     <section className="section">
       <div className="container">
@@ -173,8 +174,14 @@ export function Benefits() {
           <Eyebrow>{benefits.eyebrow}</Eyebrow>
           <h2>{benefits.title}</h2>
         </div>
+        {first && (
+          <article className="benefit benefit-transform reveal">
+            <h3>{first.title}</h3>
+            <TransformSequence before={problem.points} after={first.body} />
+          </article>
+        )}
         <div className="benefit-grid">
-          {benefits.items.map((b, i) => (
+          {rest.map((b, i) => (
             <article className="benefit reveal" style={{ transitionDelay: `${i * 80}ms` }} key={b.title}>
               <img src={media(b.image)} alt="" loading="lazy" width={640} height={640} />
               <h3>{b.title}</h3>

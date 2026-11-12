@@ -99,6 +99,83 @@ export function InteriorScrub({ src, poster }: { src: string; poster: string }) 
   )
 }
 
+/* ---------- "Estado A → Estado B": transformación en vivo ----------
+   Reusa contenido real ya existente (las 3 frustraciones de "¿Te suena?" y
+   la frase de resolución del primer beneficio) — no se inventa copy nueva.
+   Cada frustración se tacha con un trazo dorado al pasar por el viewport;
+   al llegar al final, aparece la frase de resolución con una palomita
+   dibujada. Sin pin (igual que InteriorScrub): el progreso del scroll natural
+   del bloque controla una sola timeline de GSAP. Con prefers-reduced-motion
+   todo se muestra ya tachado/resuelto, sin animar. Ver PLAN-3D.md, pieza 3. */
+export function TransformSequence({ before, after }: { before: string[]; after: string }) {
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const reduced = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current
+    if (!wrap || reduced) return
+
+    const strikes = wrap.querySelectorAll<HTMLElement>('.t-strike')
+    const beforeItems = wrap.querySelectorAll<HTMLElement>('.t-before')
+    const afterEl = wrap.querySelector<HTMLElement>('.t-after')
+    const checkPath = wrap.querySelector<SVGPathElement>('.t-check path')
+
+    gsap.set(beforeItems, { opacity: 0, y: 10 })
+    gsap.set(strikes, { scaleX: 0 })
+    if (afterEl) gsap.set(afterEl, { opacity: 0, y: 10 })
+    if (checkPath) {
+      const len = checkPath.getTotalLength()
+      gsap.set(checkPath, { strokeDasharray: len, strokeDashoffset: len })
+    }
+
+    const tl = gsap.timeline()
+    beforeItems.forEach((el, i) => {
+      tl.to(el, { opacity: 1, y: 0, duration: 0.3 }, i * 0.18)
+      tl.to(el.querySelector('.t-strike'), { scaleX: 1, duration: 0.25 }, i * 0.18 + 0.2)
+    })
+    const afterStart = beforeItems.length * 0.18 + 0.3
+    if (afterEl) tl.to(afterEl, { opacity: 1, y: 0, duration: 0.35 }, afterStart)
+    if (checkPath) tl.to(checkPath, { strokeDashoffset: 0, duration: 0.4 }, afterStart + 0.1)
+    tl.to({}, { duration: 0.3 }) // respiro final antes de soltar el scrub
+
+    const st = ScrollTrigger.create({
+      trigger: wrap,
+      start: 'top 85%',
+      end: 'bottom 40%',
+      scrub: 0.6,
+      animation: tl,
+    })
+
+    return () => st.kill()
+  }, [reduced])
+
+  return (
+    <div className="transform-seq" ref={wrapRef}>
+      <ul className="t-before-list">
+        {before.map((p) => (
+          <li className="t-before" key={p}>
+            <span className="t-mark t-x" aria-hidden="true">
+              ✕
+            </span>
+            <span className="t-text">
+              {p}
+              <i className="t-strike" aria-hidden="true" />
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="t-after">
+        <span className="t-mark t-check" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path d="M4 12.5 L9.5 18 L20 5.5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+        <span className="t-text">{after}</span>
+      </p>
+    </div>
+  )
+}
+
 /* ---------- Progreso de lectura (orientación en el scroll) ---------- */
 export function ScrollProgress() {
   const bar = useRef<HTMLSpanElement>(null)

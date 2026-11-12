@@ -966,6 +966,86 @@ a {
   padding: 0 8px;
 }
 
+.benefit-transform {
+  margin-bottom: 20px;
+  padding: 28px 24px 32px;
+}
+
+.benefit-transform h3 {
+  padding: 0 8px;
+  margin-bottom: 18px;
+}
+
+.transform-seq {
+  padding: 0 8px;
+}
+
+.t-before-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 0 18px;
+}
+
+.t-before,
+.t-after {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 1rem;
+}
+
+.t-mark {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.t-x {
+  color: var(--fg-dim);
+  background: var(--tint);
+}
+
+.t-check {
+  color: var(--surface);
+  background: var(--action);
+}
+
+.t-before .t-text {
+  position: relative;
+  color: var(--fg-dim);
+}
+
+.t-strike {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1.5px;
+  background: var(--gold);
+  transform-origin: left center;
+  transform: scaleX(1);
+}
+
+.t-after {
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+  font-weight: 600;
+  color: var(--fg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-strike {
+    transform: scaleX(1);
+  }
+}
+
 .quote {
   position: relative;
 }
