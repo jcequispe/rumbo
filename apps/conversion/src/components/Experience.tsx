@@ -5,31 +5,37 @@ import { gsap, ScrollTrigger } from '../scroll'
 
 /* ---------- Parallax de fotos ----------
    Cada <img class="parallax-img"> vive dentro de un contenedor recortado
-   (overflow:hidden, ver index.css) y es más alta que su caja; al hacer
-   scroll se desplaza verticalmente un poco más lento/rápido que el resto
-   de la página, dando sensación de profundidad. Se ata al contenedor
-   padre (no a la imagen) para que el recorrido coincida con el tiempo
+   (overflow:hidden, ver index.css) y es más alta que su caja (118%, con
+   -9% de sangrado arriba/abajo); al hacer scroll se desplaza un poco más
+   lento/rápido que el resto de la página, dando sensación de profundidad.
+   El recorrido se calcula en píxeles como % de la altura del CONTENEDOR
+   (no de la imagen, que es 18% más alta) y se deja margen bajo el 9% de
+   sangrado del CSS — con yPercent (relativo a la propia imagen, más alta)
+   el recorrido se pasaba del sangrado y dejaba un hueco sin foto en los
+   extremos. Atado al contenedor padre para que coincida con el tiempo
    que esa foto pasa en pantalla. Desactivado con prefers-reduced-motion. */
 export function useParallax() {
   useLayoutEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const imgs = Array.from(document.querySelectorAll<HTMLElement>('.parallax-img'))
-    const tweens = imgs.map((img) =>
-      gsap.fromTo(
+    const tweens = imgs.map((img) => {
+      const box = img.parentElement ?? img
+      const range = box.getBoundingClientRect().height * 0.07
+      return gsap.fromTo(
         img,
-        { yPercent: -9 },
+        { y: -range },
         {
-          yPercent: 9,
+          y: range,
           ease: 'none',
           scrollTrigger: {
-            trigger: img.parentElement ?? img,
+            trigger: box,
             start: 'top bottom',
             end: 'bottom top',
             scrub: 0.6,
           },
         },
-      ),
-    )
+      )
+    })
     return () => {
       tweens.forEach((tw) => {
         tw.scrollTrigger?.kill()

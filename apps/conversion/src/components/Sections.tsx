@@ -277,7 +277,7 @@ export function EditionPicker() {
         </div>
         <div className="edition-layout reveal">
           <div className="edition-stage" ref={stage} onPointerMove={tilt} onPointerLeave={untilt}>
-            <img key={active.id} src={media(active.image)} alt={`Portada ${active.label}`} width={1024} height={640} />
+            <img key={active.id} src={media(active.image)} alt={`Portada ${active.label}`} width={1055} height={1491} />
             <span className="edition-badge" style={{ background: active.color }} aria-hidden="true" />
           </div>
           <div className="edition-side">
