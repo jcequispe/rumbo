@@ -48,18 +48,58 @@ function CartIcon() {
   )
 }
 
+function MenuIcon({ open }: { open: boolean }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+      {open ? (
+        <path d="M5 5l14 14M19 5L5 19" />
+      ) : (
+        <>
+          <path d="M3 6h18" />
+          <path d="M3 12h18" />
+          <path d="M3 18h18" />
+        </>
+      )}
+    </svg>
+  )
+}
+
 export function Nav() {
   const { content, media } = useContent()
   const cart = useCart()
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const close = () => setMenuOpen(false)
+    window.addEventListener('hashchange', close)
+    const mq = matchMedia('(min-width: 820px)')
+    mq.addEventListener('change', close)
+    return () => {
+      window.removeEventListener('hashchange', close)
+      mq.removeEventListener('change', close)
+    }
+  }, [menuOpen])
+
   return (
     <header className="nav">
       <div className="container nav-inner">
         <a className="nav-wordmark" href="#inicio" aria-label={content.brand.wordmark}>
           {content.brand.logo ? <img src={media(content.brand.logo)} alt={content.brand.wordmark} className="nav-logo" /> : content.brand.wordmark}
         </a>
-        <nav className="nav-links" aria-label="Principal">
+        <button
+          type="button"
+          className="nav-toggle"
+          aria-expanded={menuOpen}
+          aria-controls="nav-links"
+          aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+          onClick={() => setMenuOpen((v) => !v)}
+        >
+          <MenuIcon open={menuOpen} />
+        </button>
+        <nav id="nav-links" className={menuOpen ? 'nav-links mobile-open' : 'nav-links'} aria-label="Principal">
           {content.nav.links.map((l) => (
-            <a key={l.href} href={l.href}>
+            <a key={l.href} href={l.href} onClick={() => setMenuOpen(false)}>
               {l.label}
             </a>
           ))}
@@ -168,7 +208,7 @@ export function Benefits() {
   const { benefits, problem } = content
   const [first, ...rest] = benefits.items
   return (
-    <section className="section">
+    <section className="section" id="metodo">
       <div className="container">
         <div className="section-head reveal">
           <Eyebrow>{benefits.eyebrow}</Eyebrow>
