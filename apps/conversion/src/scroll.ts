@@ -28,7 +28,6 @@ export function useScrollEngine() {
     // que un salto de ancla nativo (clic en <a href="#...">) se revertía solo:
     // el navegador movía scrollY una vez, pero el RAF de Lenis lo regresaba a
     // donde él creía que estaba. Hay que pedírselo a Lenis directamente.
-    const navOffset = -(32 + 72) // --switcher-h + el mismo margen de scroll-padding-top del CSS
     const onAnchorClick = (e: MouseEvent) => {
       const a = (e.target as HTMLElement).closest('a[href^="#"]')
       if (!a) return
@@ -36,7 +35,12 @@ export function useScrollEngine() {
       const el = document.getElementById(id)
       if (!el) return
       e.preventDefault()
-      lenis.scrollTo(el, { offset: navOffset })
+      // --switcher-h solo existe (32px) mientras la barra de revisión interna
+      // está montada (desarrollo); en producción es 0. Se lee en vivo en vez
+      // de asumir un valor fijo para que el salto de ancla no se desalinee
+      // según el entorno. El +72 es el mismo margen que scroll-padding-top.
+      const switcherH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--switcher-h')) || 0
+      lenis.scrollTo(el, { offset: -(switcherH + 72) })
     }
     document.addEventListener('click', onAnchorClick)
 

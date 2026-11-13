@@ -1,6 +1,11 @@
 // Barra de revisión interna — NO es parte del diseño final de ninguna
 // variante. Deja elegir entre las 4 propuestas de landing page desde
-// cualquiera de ellas. Mismo componente (adaptado) en las 4 apps.
+// cualquiera de ellas. Mismo componente (adaptado) en las 4 apps. Solo se
+// monta en desarrollo (ver App.tsx); reserva su propio espacio vía
+// --switcher-h para no depender de un alto fijo que ya no aplica en
+// producción (el nav y los saltos de ancla usan esa misma variable).
+import { useLayoutEffect } from 'react'
+
 const VARIANTS = [
   { path: '/rumbo/', label: 'Rumbo — cinemático' },
   { path: '/rumbo/agenda-aurea/', label: 'Agenda Áurea — ledger' },
@@ -10,6 +15,13 @@ const VARIANTS = [
 
 export default function VariantSwitcher() {
   const current = typeof window !== 'undefined' ? window.location.pathname : VARIANTS[0].path
+
+  useLayoutEffect(() => {
+    document.documentElement.style.setProperty('--switcher-h', '32px')
+    return () => {
+      document.documentElement.style.removeProperty('--switcher-h')
+    }
+  }, [])
 
   return (
     <div
