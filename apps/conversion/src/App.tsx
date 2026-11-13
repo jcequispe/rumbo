@@ -18,7 +18,7 @@ import {
   Unboxing,
   useReveal,
 } from './components/Sections'
-import { Demo } from './components/Experience'
+import { Demo, useParallax } from './components/Experience'
 import { CartDrawer, CartToast } from './cart/CartDrawer'
 import { CartProvider } from './cart/CartProvider'
 import { ContentProvider } from './content/ContentProvider'
@@ -28,6 +28,7 @@ import { useScrollEngine } from './scroll'
 function Landing() {
   useReveal()
   useScrollEngine()
+  useParallax()
   return (
     <SelectionProvider>
       <TopBanner />
