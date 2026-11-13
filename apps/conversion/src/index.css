@@ -910,7 +910,7 @@ a {
   bottom: 0;
   z-index: 60;
   padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-  background: rgba(251, 246, 239, 0.96);
+  background: var(--bg);
   border-top: 1px solid var(--line);
   transform: translateY(110%);
   transition: transform 0.35s var(--ease);
