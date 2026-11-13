@@ -415,12 +415,20 @@ a {
   margin-right: 8px;
 }
 
-.hero-media img {
-  width: 100%;
+.hero-media {
+  position: relative;
+  overflow: hidden;
   border-radius: 28px;
   aspect-ratio: 4 / 5;
-  object-fit: cover;
   box-shadow: 0 30px 60px -30px rgba(31, 34, 48, 0.45);
+}
+
+.hero-media img {
+  position: absolute;
+  inset: -9% 0;
+  width: 100%;
+  height: 118%;
+  object-fit: cover;
 }
 
 /* ---------- Problema ---------- */
@@ -445,12 +453,20 @@ a {
   gap: 32px;
 }
 
-.benefit img {
-  width: 100%;
+.benefit-media {
+  position: relative;
+  overflow: hidden;
   aspect-ratio: 1;
-  object-fit: cover;
   border-radius: var(--radius);
   margin-bottom: 20px;
+}
+
+.benefit-media img {
+  position: absolute;
+  inset: -9% 0;
+  width: 100%;
+  height: 118%;
+  object-fit: cover;
 }
 
 .benefit p {
@@ -536,10 +552,18 @@ a {
   align-items: center;
 }
 
-.details-media img {
-  width: 100%;
+.details-media {
+  position: relative;
+  overflow: hidden;
   border-radius: var(--radius);
   aspect-ratio: 1;
+}
+
+.details-media img {
+  position: absolute;
+  inset: -9% 0;
+  width: 100%;
+  height: 118%;
   object-fit: cover;
 }
 

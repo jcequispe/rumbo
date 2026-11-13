@@ -175,7 +175,7 @@ export function Hero() {
           </ul>
         </div>
         <div className="hero-media">
-          <img src={media(hero.image)} alt="" width={1024} height={1280} fetchPriority="high" />
+          <img className="parallax-img" src={media(hero.image)} alt="" width={1024} height={1280} fetchPriority="high" />
         </div>
       </div>
     </section>
@@ -223,7 +223,9 @@ export function Benefits() {
         <div className="benefit-grid">
           {rest.map((b, i) => (
             <article className="benefit reveal" style={{ transitionDelay: `${i * 80}ms` }} key={b.title}>
-              <img src={media(b.image)} alt="" loading="lazy" width={640} height={640} />
+              <div className="benefit-media">
+                <img className="parallax-img" src={media(b.image)} alt="" loading="lazy" width={640} height={640} />
+              </div>
               <h3>{b.title}</h3>
               <p>{b.body}</p>
             </article>
@@ -338,7 +340,7 @@ export function Details() {
           {details.video ? (
             <InteriorScrub src={media(details.video)} poster={media(details.image)} />
           ) : (
-            <img src={media(details.image)} alt="" loading="lazy" width={800} height={800} />
+            <img className="parallax-img" src={media(details.image)} alt="" loading="lazy" width={800} height={800} />
           )}
         </div>
         <div className="reveal">
@@ -549,7 +551,7 @@ export function Unboxing() {
           <p className="lead">{unboxing.body}</p>
         </div>
         <div className="details-media reveal">
-          <img src={media(unboxing.image)} alt="" loading="lazy" width={800} height={800} />
+          <img className="parallax-img" src={media(unboxing.image)} alt="" loading="lazy" width={800} height={800} />
         </div>
       </div>
     </section>

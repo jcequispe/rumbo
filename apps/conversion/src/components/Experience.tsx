@@ -3,6 +3,42 @@ import { useCart } from '../cart/CartProvider'
 import { useContent } from '../content/ContentProvider'
 import { gsap, ScrollTrigger } from '../scroll'
 
+/* ---------- Parallax de fotos ----------
+   Cada <img class="parallax-img"> vive dentro de un contenedor recortado
+   (overflow:hidden, ver index.css) y es más alta que su caja; al hacer
+   scroll se desplaza verticalmente un poco más lento/rápido que el resto
+   de la página, dando sensación de profundidad. Se ata al contenedor
+   padre (no a la imagen) para que el recorrido coincida con el tiempo
+   que esa foto pasa en pantalla. Desactivado con prefers-reduced-motion. */
+export function useParallax() {
+  useLayoutEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const imgs = Array.from(document.querySelectorAll<HTMLElement>('.parallax-img'))
+    const tweens = imgs.map((img) =>
+      gsap.fromTo(
+        img,
+        { yPercent: -9 },
+        {
+          yPercent: 9,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: img.parentElement ?? img,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 0.6,
+          },
+        },
+      ),
+    )
+    return () => {
+      tweens.forEach((tw) => {
+        tw.scrollTrigger?.kill()
+        tw.kill()
+      })
+    }
+  }, [])
+}
+
 /* ---------- Titular "escrito a pluma" ----------
    El h1 se revela con un trazo dorado, como si la pluma de sus propias
    fotos lo escribiera: clip-path de izquierda a derecha + un nib que viaja
