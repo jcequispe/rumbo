@@ -311,7 +311,7 @@ export function Details() {
               </li>
             ))}
           </ul>
-          <p className="size-chip">{details.size}</p>
+          {details.size && <p className="size-chip">{details.size}</p>}
           <div className="format-note">
             <h3>{formats.title}</h3>
             <p>{formats.body}</p>
@@ -576,14 +576,15 @@ export function Footer() {
         <span className="footer-wordmark">{brand.wordmark}</span>
         <nav className="footer-links">
           {footer.links.map((l) => (
-            <a key={l} href="#">
+            <span key={l} className="footer-link-pending">
               {l}
-            </a>
+            </span>
           ))}
         </nav>
-        <p>{footer.legal}</p>
+        {footer.legal && <p>{footer.legal}</p>}
         <p>
-          {footer.address} · <a href={`mailto:${brand.email}`}>{brand.email}</a>
+          {footer.address ? `${footer.address} · ` : null}
+          <a href={`mailto:${brand.email}`}>{brand.email}</a>
         </p>
       </div>
     </footer>
@@ -592,8 +593,6 @@ export function Footer() {
 
 export function StickyBar() {
   const { content } = useContent()
-  const { editionId } = useSelection()
-  const color = content.editions.find((e) => e.id === editionId)?.color
   const c = useCart()
   const [show, setShow] = useState(false)
 
@@ -620,7 +619,6 @@ export function StickyBar() {
         </button>
       ) : (
         <a className="btn btn-primary" href="#elige" tabIndex={show ? 0 : -1}>
-          <span className="sticky-dot" style={{ background: color }} aria-hidden="true" />
           {content.ui.stickyCta}
         </a>
       )}
