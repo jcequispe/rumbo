@@ -1966,6 +1966,10 @@ html.no-scroll {
 .picker {
   background: color-mix(in srgb, var(--ed) 9%, var(--tint));
   transition: background 0.6s var(--ease);
+  padding-top: clamp(32px, 4vw, 64px);
+}
+.picker .section-head {
+  margin-bottom: clamp(20px, 3vw, 32px);
 }
 .edition-stage {
   background: color-mix(in srgb, var(--ed) 22%, var(--tint));
@@ -2076,9 +2080,8 @@ html.no-scroll {
   min-height: 44px;
 }
 .nav-logo {
-  height: 34px;
+  height: 38px;
   width: auto;
-  border-radius: 6px;
 }
 @media (max-width: 859px) {
   .demo-card {
