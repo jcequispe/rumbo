@@ -56,7 +56,7 @@ export default function App() {
   return (
     <>
       <Atmosphere />
-      <VariantSwitcher />
+      {import.meta.env.DEV && <VariantSwitcher />}
       <ContentProvider>
         <CartProvider>
           <Landing />

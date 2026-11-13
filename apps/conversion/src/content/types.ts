@@ -30,7 +30,7 @@ export interface Content {
     image: string
     video?: string
     materials: { label: string; detail: string }[]
-    size: string
+    size?: string
   }
   proof: {
     verified?: boolean
@@ -133,5 +133,5 @@ export interface Content {
     chosen: string
     pickOne: string
   }
-  footer: { links: string[]; legal: string; address: string }
+  footer: { links: string[]; legal?: string; address?: string }
 }

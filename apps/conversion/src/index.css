@@ -228,7 +228,7 @@ a {
   position: sticky;
   top: var(--switcher-h);
   z-index: 50;
-  background: rgba(251, 246, 239, 0.9);
+  background: rgba(251, 246, 239, 0.98);
   backdrop-filter: saturate(1.4) blur(12px);
   border-bottom: 1px solid var(--line);
 }
@@ -863,6 +863,15 @@ a {
   min-height: 44px;
 }
 
+.footer-link-pending {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+  cursor: default;
+  opacity: 0.7;
+}
+
 /* ---------- Barra fija móvil ---------- */
 .sticky-bar {
   position: fixed;
@@ -1425,6 +1434,9 @@ html.no-scroll {
 @media (max-width: 819px) {
   .toast {
     bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  .hero-media {
+    order: -1;
   }
 }
 
@@ -1996,14 +2008,6 @@ html.no-scroll {
   margin: 0 0 12px;
 }
 
-/* Sticky y cierre toman el color elegido */
-.sticky-dot {
-  width: 14px;
-  height: 14px;
-  margin-right: 10px;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.85);
-}
 .final-cta {
   background-image: radial-gradient(70% 90% at 50% 0%, color-mix(in srgb, var(--ed) 38%, transparent), transparent 70%);
 }
