@@ -1554,7 +1554,7 @@ html.no-scroll {
     grid-template-columns: repeat(3, 1fr);
   }
   .edition-layout {
-    grid-template-columns: 1.3fr 1fr;
+    grid-template-columns: minmax(260px, 360px) 1fr;
     gap: 56px;
   }
   .details-grid {
