@@ -19,6 +19,7 @@ export interface Content {
     chips?: string[]
     assurances: string[]
   }
+  trustBar?: { items: string[] }
   problem: { eyebrow: string; title: string; body: string; points: string[] }
   benefits: { eyebrow: string; title: string; items: { title: string; body: string; image: string }[] }
   editionsSection: { eyebrow: string; title: string; sub: string; cta: string; reassure?: string[] }
