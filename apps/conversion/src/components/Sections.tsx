@@ -632,13 +632,15 @@ export function Footer() {
     <footer id="pie" className="footer">
       <div className="container">
         <span className="footer-wordmark">{brand.wordmark}</span>
-        <nav className="footer-links">
-          {footer.links.map((l) => (
-            <span key={l} className="footer-link-pending">
-              {l}
-            </span>
-          ))}
-        </nav>
+        {footer.links.length > 0 && (
+          <nav className="footer-links">
+            {footer.links.map((l) => (
+              <span key={l} className="footer-link-pending">
+                {l}
+              </span>
+            ))}
+          </nav>
+        )}
         {footer.legal && <p>{footer.legal}</p>}
         <p>
           {footer.address ? `${footer.address} · ` : null}
