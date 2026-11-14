@@ -175,7 +175,7 @@ export function Hero() {
           </ul>
         </div>
         <div className="hero-media">
-          <img className="parallax-img" src={media(hero.image)} alt="" width={1024} height={1280} fetchPriority="high" />
+          <img className="parallax-img" src={media(hero.image)} alt="" width={1120} height={1600} fetchPriority="high" />
         </div>
       </div>
     </section>

@@ -419,7 +419,7 @@ a {
   position: relative;
   overflow: hidden;
   border-radius: 28px;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1120 / 1600;
   box-shadow: 0 30px 60px -30px rgba(31, 34, 48, 0.45);
 }
 
