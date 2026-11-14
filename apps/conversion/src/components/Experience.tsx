@@ -66,16 +66,33 @@ export function PenWrittenTitle({ title, accent }: { title: string; accent: stri
 
     const tl = gsap.timeline({ delay: 0.2 })
     lines.forEach((el, i) => {
-      const w = el.getBoundingClientRect().width
-      const h = el.getBoundingClientRect().height
-      if (nib) {
-        tl.set(nib, { x: 0, y: h * 0.78, opacity: 1 }, i === 0 ? 0 : undefined)
-        tl.to(nib, { x: w * 0.5, duration: 0.45, ease: 'power1.in' }, '<')
-        tl.to(nib, { x: w + 4, duration: 0.45, ease: 'power1.out' }, '<0.45')
-      }
-      tl.to(el, { clipPath: 'inset(0 0% 0 0)', duration: 0.9, ease: 'power2.inOut' }, i === 0 ? 0 : '-=0.15')
+      // El punto se coloca con medidas relativas al h1 (position:relative, igual que
+      // el punto) y se LEEN EN CADA CUADRO: la tipografía web puede terminar de
+      // cargar a mitad de la animación y cambiar el ancho del texto; medir una sola
+      // vez dejaba el punto desfasado del trazo. Cada línea escribe sobre SU altura.
+      const at = `l${i}`
+      // Cada línea empieza cuando la anterior terminó (y el punto se apagó).
+      tl.addLabel(at, i === 0 ? 0 : '>')
+      if (nib) tl.set(nib, { x: 0, y: el.offsetTop + el.offsetHeight * 0.78, opacity: 1 }, at)
+      // Un solo progreso (0→1) mueve a la vez el trazo y el punto: nunca se desfasan.
+      const p = { v: 0 }
+      tl.to(
+        p,
+        {
+          v: 1,
+          duration: 0.9,
+          ease: 'power2.inOut',
+          onUpdate: () => {
+            el.style.clipPath = `inset(0 ${(1 - p.v) * 100}% 0 0)`
+            if (nib) gsap.set(nib, { x: p.v * el.offsetWidth, y: el.offsetTop + el.offsetHeight * 0.78 })
+          },
+        },
+        at,
+      )
+      if (nib) tl.to(nib, { opacity: 0, duration: 0.15 }, '>')
     })
-    if (nib) tl.to(nib, { opacity: 0, duration: 0.25 })
+    // Al terminar se quita el recorte: así nunca queda cortada la cursiva del final.
+    tl.set(lines, { clearProps: 'clipPath' })
 
     return () => {
       tl.kill()

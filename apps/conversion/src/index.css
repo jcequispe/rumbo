@@ -1641,10 +1641,16 @@ html.no-scroll {
 }
 
 /* Titular del hero: "escrito a pluma" — ver PLAN-3D.md pieza 1.
-   .pen-line fuerza 2 líneas predecibles (título / acento) para que el
-   trazo de GSAP sepa el ancho exacto de cada una. */
+   .pen-line fuerza 2 líneas predecibles (título / acento) y las ajusta al
+   ancho de su texto, para que el trazo de GSAP sepa el recorrido exacto. */
 .hero h1 .pen-line {
   display: block;
+  /* Ancho = el del texto (no el de la columna): así el trazo y el punto recorren
+     justo lo escrito. El padding evita que la cursiva se recorte al final. */
+  width: fit-content;
+  max-width: 100%;
+  padding-right: 0.1em;
+  white-space: nowrap;
 }
 .hero h1 {
   position: relative;
