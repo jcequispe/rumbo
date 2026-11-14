@@ -70,7 +70,7 @@ export function CartDrawer() {
                     <img src={media(ed.image)} alt="" width={72} height={72} />
                     <div className="cart-line-info">
                       <strong>{ed.label}</strong>
-                      <span>{fm.name}</span>
+                      <span>{cart.lineDetail ?? fm.name}</span>
                       <button type="button" className="text-btn" onClick={() => c.remove(l.editionId, l.formatId)}>
                         {cart.remove}
                       </button>

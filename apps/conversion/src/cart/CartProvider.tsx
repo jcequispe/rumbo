@@ -109,7 +109,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const remove = useCallback((editionId: string, formatId: string) => setLines((prev) => prev.filter((l) => !same(l, editionId, formatId))), [])
 
-  const money = useCallback((n: number) => `${pricing.currency} ${formatMoney(n)}`, [pricing.currency])
+  // Espacio que no se parte: evita que el símbolo ('$') quede solo al final de una línea.
+  const money = useCallback((n: number) => `${pricing.currency}\u00A0${formatMoney(n)}`, [pricing.currency])
   const unitLabel = useCallback((n: number) => (n === 1 ? pricing.unitOne : pricing.unitMany), [pricing.unitOne, pricing.unitMany])
 
   const checkoutHref = useMemo(() => {
@@ -120,10 +121,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       })
       .join('\n')
     const totalLine = cart.messageTotal
-      .replace('{total}', money(total))
+      .replace('{total}', money(total).replace(/\u00A0/g, ' '))
       .replace('{count}', String(count))
       .replace('{unit}', unitLabel(count))
-    return waLink(`${cart.messageIntro}\n${body}\n${totalLine}`)
+    const outro = cart.messageOutro ? `\n\n${cart.messageOutro}` : ''
+    return waLink(`${cart.messageIntro}\n${body}\n${totalLine}${outro}`)
   }, [lines, cart, labelOf, money, total, count, unitLabel, waLink])
 
   const value: CartCtx = {

@@ -114,6 +114,10 @@ export interface Content {
     messageIntro: string
     messageLine: string
     messageTotal: string
+    /** Opcional: texto al final del mensaje de WhatsApp (p. ej. campos para completar). */
+    messageOutro?: string
+    /** Opcional: línea bajo el nombre del producto en el carrito (si falta, se usa el nombre del formato). */
+    lineDetail?: string
   }
   ui: {
     fromPrice: string

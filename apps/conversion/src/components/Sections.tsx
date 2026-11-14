@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useCart } from '../cart/CartProvider'
 import { useContent } from '../content/ContentProvider'
 import { useSelection } from '../selection'
+import { ZoomImage } from './ZoomImage'
 import { InteriorScrub, PenWrittenTitle, ScrollProgress, TierNudge, TransformSequence, usePerDay } from './Experience'
 
 export { SelectionProvider } from '../selection'
@@ -241,6 +242,7 @@ export function Benefits() {
             <article className="benefit reveal" style={{ transitionDelay: `${i * 80}ms` }} key={b.title}>
               <div className="benefit-media">
                 <img className="parallax-img" src={media(b.image)} alt="" loading="lazy" width={640} height={640} />
+                <ZoomImage src={media(b.image)} alt={b.title} />
               </div>
               <h3>{b.title}</h3>
               <p>{b.body}</p>
@@ -356,7 +358,10 @@ export function Details() {
           {details.video ? (
             <InteriorScrub src={media(details.video)} poster={media(details.image)} />
           ) : (
-            <img className="parallax-img" src={media(details.image)} alt="" loading="lazy" width={800} height={800} />
+            <>
+              <img className="parallax-img" src={media(details.image)} alt="" loading="lazy" width={800} height={800} />
+              <ZoomImage src={media(details.image)} alt={details.title} />
+            </>
           )}
         </div>
         <div className="reveal">
@@ -568,6 +573,7 @@ export function Unboxing() {
         </div>
         <div className="details-media reveal">
           <img className="parallax-img" src={media(unboxing.image)} alt="" loading="lazy" width={800} height={800} />
+          <ZoomImage src={media(unboxing.image)} alt={unboxing.title} />
         </div>
       </div>
     </section>
