@@ -235,13 +235,19 @@ export function Benefits() {
           <article className="benefit benefit-transform reveal">
             <h3>{first.title}</h3>
             <TransformSequence before={problem.points} after={first.body} />
+            {first.image && (
+              <figure className="benefit-figure">
+                <img src={media(first.image)} alt={first.title} loading="lazy" />
+                <ZoomImage src={media(first.image)} alt={first.title} />
+              </figure>
+            )}
           </article>
         )}
         <div className="benefit-grid">
           {rest.map((b, i) => (
             <article className="benefit reveal" style={{ transitionDelay: `${i * 80}ms` }} key={b.title}>
               <div className="benefit-media">
-                <img className="parallax-img" src={media(b.image)} alt="" loading="lazy" width={640} height={640} />
+                <img src={media(b.image)} alt="" loading="lazy" />
                 <ZoomImage src={media(b.image)} alt={b.title} />
               </div>
               <h3>{b.title}</h3>
@@ -543,7 +549,10 @@ export function Pricing() {
 
         {gift && (
         <div className="gift reveal">
-          <img src={media(gift.image)} alt="" loading="lazy" width={480} height={480} />
+          <div className="gift-media">
+            <img src={media(gift.image)} alt={gift.title} loading="lazy" />
+            <ZoomImage src={media(gift.image)} alt={gift.title} />
+          </div>
           <div>
             <span className="gift-tag">{gift.tag}</span>
             <h3>{gift.title}</h3>
@@ -617,9 +626,14 @@ export function Faq() {
 }
 
 export function FinalCta() {
-  const { finalCta } = useContent().content
+  const { content, media } = useContent()
+  const { finalCta } = content
   return (
-    <section id="cierre" className="section section-dark final-cta">
+    <section
+      id="cierre"
+      className={finalCta.image ? 'section section-dark final-cta has-photo' : 'section section-dark final-cta'}
+      style={finalCta.image ? { backgroundImage: `linear-gradient(to bottom, rgba(33, 22, 12, 0.1) 0%, rgba(33, 22, 12, 0.6) 42%, rgba(33, 22, 12, 0.9) 100%), url(${media(finalCta.image)})` } : undefined}
+    >
       <div className="container narrow reveal">
         <h2>{finalCta.title}</h2>
         <p className="lead">{finalCta.sub}</p>
