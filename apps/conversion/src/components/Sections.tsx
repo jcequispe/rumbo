@@ -613,7 +613,7 @@ export function Faq() {
 export function FinalCta() {
   const { finalCta } = useContent().content
   return (
-    <section className="section section-dark final-cta">
+    <section id="cierre" className="section section-dark final-cta">
       <div className="container narrow reveal">
         <h2>{finalCta.title}</h2>
         <p className="lead">{finalCta.sub}</p>
@@ -629,7 +629,7 @@ export function Footer() {
   const { content } = useContent()
   const { footer, brand } = content
   return (
-    <footer className="footer">
+    <footer id="pie" className="footer">
       <div className="container">
         <span className="footer-wordmark">{brand.wordmark}</span>
         <nav className="footer-links">
@@ -655,7 +655,7 @@ export function StickyBar() {
   const [show, setShow] = useState(false)
 
   useEffect(() => {
-    const hide = ['inicio', 'elige', 'pedido'].map((id) => document.getElementById(id)).filter((e): e is HTMLElement => !!e)
+    const hide = ['inicio', 'elige', 'pedido', 'cierre', 'pie'].map((id) => document.getElementById(id)).filter((e): e is HTMLElement => !!e)
     const visible = new Set<Element>()
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) {
