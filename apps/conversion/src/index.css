@@ -487,17 +487,32 @@ a {
 .benefit-media {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 1;
   border-radius: var(--radius);
   margin-bottom: 20px;
 }
 
+/* La foto se muestra COMPLETA (sin recorte): son páginas de la agenda con texto. */
 .benefit-media img {
-  position: absolute;
-  inset: -9% 0;
+  display: block;
   width: 100%;
-  height: 118%;
-  object-fit: cover;
+  height: auto;
+}
+
+.benefit-grid {
+  align-items: start;
+}
+
+.benefit-figure {
+  position: relative;
+  overflow: hidden;
+  margin: 24px 0 0;
+  border-radius: var(--radius);
+}
+
+.benefit-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .benefit p {
@@ -587,7 +602,7 @@ a {
   position: relative;
   overflow: hidden;
   border-radius: var(--radius);
-  aspect-ratio: 1;
+  aspect-ratio: 4 / 5;
 }
 
 .details-media img {
@@ -596,6 +611,7 @@ a {
   width: 100%;
   height: 118%;
   object-fit: cover;
+  object-position: 50% 28%; /* portada y páginas, no solo el centro */
 }
 
 .interior-scrub {
@@ -829,12 +845,18 @@ a {
   background: rgba(255, 255, 255, 0.07);
 }
 
-.gift img {
+.gift-media {
+  position: relative;
+  overflow: hidden;
   width: 100%;
-  max-width: 220px;
-  aspect-ratio: 1;
-  object-fit: cover;
+  max-width: 300px;
   border-radius: 16px;
+}
+
+.gift-media img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 .gift-tag {
@@ -915,6 +937,14 @@ a {
 
 .final-cta .btn {
   margin-top: 28px;
+}
+
+/* Foto de fondo del cierre: el degradado oscuro va en el estilo en línea de la sección */
+.final-cta.has-photo {
+  background-size: cover;
+  background-position: center top;
+  /* La foto se ve arriba (con el rostro) y el texto queda debajo, sobre la zona oscura */
+  padding-top: min(64vw, 360px);
 }
 
 .footer {

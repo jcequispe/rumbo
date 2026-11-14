@@ -91,7 +91,7 @@ export interface Content {
   unboxing: { title: string; body: string; image: string }
   guarantee: { title: string; body: string }
   faq: { q: string; a: string }[]
-  finalCta: { title: string; sub: string; cta: string }
+  finalCta: { title: string; sub: string; cta: string; image?: string }
   cart: {
     title: string
     open: string
