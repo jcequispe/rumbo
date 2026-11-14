@@ -15,7 +15,7 @@ import {
   Steps,
   StickyBar,
   TopBanner,
-  Unboxing,
+  TrustBar,
   useReveal,
 } from './components/Sections'
 import { Demo, useParallax } from './components/Experience'
@@ -35,15 +35,15 @@ function Landing() {
       <Nav />
       <main>
         <Hero />
+        <TrustBar />
         <Problem />
-        <Demo />
         <Benefits />
-        <EditionPicker />
+        <Demo />
         <Details />
         <Proof />
         <Steps />
+        <EditionPicker />
         <Pricing />
-        <Unboxing />
         <Faq />
         <FinalCta />
       </main>

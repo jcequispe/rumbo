@@ -182,6 +182,22 @@ export function Hero() {
   )
 }
 
+export function TrustBar() {
+  const { trustBar } = useContent().content
+  if (!trustBar?.items?.length) return null
+  return (
+    <div className="trust-bar">
+      <ul className="container">
+        {trustBar.items.map((t) => (
+          <li key={t}>
+            <span aria-hidden="true">✓</span> {t}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 export function Problem() {
   const { problem } = useContent().content
   return (

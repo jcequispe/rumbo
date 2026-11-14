@@ -374,6 +374,37 @@ a {
   margin-bottom: clamp(32px, 5vw, 56px);
 }
 
+/* ---------- Barra de confianza ---------- */
+.trust-bar {
+  border-bottom: 1px solid var(--line);
+  background: var(--tint);
+}
+
+.trust-bar ul {
+  list-style: none;
+  margin: 0;
+  padding: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 28px;
+}
+
+.trust-bar li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--fg-dim);
+  white-space: nowrap;
+}
+
+.trust-bar li span {
+  color: var(--action);
+  font-weight: 800;
+}
+
 /* ---------- Hero ---------- */
 .hero {
   padding: clamp(32px, 6vw, 72px) 0 clamp(48px, 8vw, 96px);
