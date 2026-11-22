@@ -45,7 +45,7 @@ export interface Content {
     eyebrow: string
     title: string
     sub: string
-    note: string
+    note?: string
     weekLabel: string
     days: string[]
     daysLong: string[]
