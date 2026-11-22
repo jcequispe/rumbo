@@ -41,8 +41,8 @@ function Landing() {
         <Proof />
         <Steps />
         <BuyBox />
-        <Faq />
         <FinalCta />
+        <Faq />
       </main>
       <Footer />
       <StickyBar />
