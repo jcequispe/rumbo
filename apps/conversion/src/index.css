@@ -2518,7 +2518,13 @@ html.no-scroll {
   border: 1px solid var(--line);
 }
 .buy .gift-media {
-  max-width: 220px;
+  max-width: none;
+  aspect-ratio: 1;
+}
+.buy .gift-media img {
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
 }
 .buy .gift p,
 .buy .guarantee p {
@@ -2620,6 +2626,9 @@ html.no-scroll {
   }
   .buy-extras {
     grid-template-columns: 1.4fr 1fr;
+  }
+  .buy .gift-media {
+    width: 220px;
   }
 }
 
