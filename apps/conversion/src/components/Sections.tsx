@@ -207,14 +207,6 @@ export function Problem() {
         <Eyebrow>{problem.eyebrow}</Eyebrow>
         <h2>{problem.title}</h2>
         <p className="lead">{problem.body}</p>
-        <ul className="pain-list">
-          {problem.points.map((p, i) => (
-            <li key={p}>
-              <span className="pain-n">{String(i + 1).padStart(2, '0')}</span>
-              {p}
-            </li>
-          ))}
-        </ul>
       </div>
     </section>
   )
