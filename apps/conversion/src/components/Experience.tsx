@@ -417,7 +417,7 @@ export function Demo() {
             </button>
           </div>
         </div>
-        <p className="fine demo-note reveal">{demo.note}</p>
+        {demo.note && <p className="fine demo-note reveal">{demo.note}</p>}
       </div>
     </section>
   )
