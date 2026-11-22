@@ -1,43 +1,30 @@
-# React + TypeScript + Vite
+# Rumbo — Agenda Renacer 2027 (E·Sencia)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Landing de un solo producto, publicada en GitHub Pages:
+`https://jcequispe.github.io/rumbo/conversion/` (`/rumbo/` redirige ahí).
 
-Currently, two official plugins are available:
+## Cómo está armado
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- `apps/conversion/` — el código de la landing (React + Vite).
+- `public/conversion/` — esa misma landing **ya compilada**; es lo que se publica.
+- Raíz del repo — solo una página que redirige a la landing y un `404.html` que hace lo mismo
+  (así los enlaces viejos no quedan rotos). Su `vite.config.ts` incluye un service worker que se
+  desinstala solo, para limpiar el de una versión anterior.
 
-## React Compiler
+El contenido (textos, precios, WhatsApp, fotos) no está en este repo: se descarga al abrir la
+página desde `agenda-aurea-content` (`sites/conversion/content.yml`). Cambiar un texto o una foto
+no requiere recompilar nada aquí.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
-
-## Variantes de landing (selector superior)
-
-`/rumbo/` (esta app), `/rumbo/agenda-aurea/` (HTML estático en `public/`), `/rumbo/imperfecta/` y `/rumbo/conversion/`.
-El código de las dos últimas vive en `apps/` y se publica ya compilado en `public/<slug>/`:
+## Cambiar el código de la landing
 
 ```bash
-./scripts/build-variants.sh   # reconstruye apps/* → public/*, luego commit
+./scripts/build-variants.sh   # recompila apps/conversion → public/conversion
+git add apps public && git commit
 ```
 
-Su contenido (textos, precios, WhatsApp, imágenes) viene en runtime del repo `agenda-aurea-content`.
+Se trabaja en `develop` y se mergea a `master`; el push a `master` publica (`.github/workflows/ci-cd.yml`).
+
+## Historial
+
+Antes este repo tenía otras landings (`imperfecta`, `agenda-aurea` y la app raíz "Rumbo").
+Se retiraron; siguen en el historial. Para recuperarlas: `git checkout pre-limpieza-landings`.
