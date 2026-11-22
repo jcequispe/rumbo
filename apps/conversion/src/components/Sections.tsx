@@ -523,7 +523,7 @@ export function Unboxing() {
 }
 
 export function Faq() {
-  const { content, waLink } = useContent()
+  const { content } = useContent()
   const [open, setOpen] = useState(0)
   return (
     <section className="section" id="preguntas">
@@ -548,11 +548,6 @@ export function Faq() {
             </div>
           ))}
         </div>
-        <p className="faq-wa">
-          <a className="link-arrow" href={waLink(content.ui.whatsappCta)} target="_blank" rel="noreferrer">
-            {content.ui.whatsappCta} <span aria-hidden="true">→</span>
-          </a>
-        </p>
       </div>
     </section>
   )
