@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { WaIcon } from '../cart/CartDrawer'
 import { useCart } from '../cart/CartProvider'
-import { bestTotal, savings } from '../cart/pricing'
+import { bestTotal, savings, unitPrice } from '../cart/pricing'
 import { useContent } from '../content/ContentProvider'
 import { useSelection } from '../selection'
 import { ZoomImage } from './ZoomImage'
@@ -121,15 +121,11 @@ export function Nav() {
   )
 }
 
-function minPerUnit(tiers: { qty: number; total: number; perUnit?: number }[]) {
-  return Math.min(...tiers.map((t) => t.perUnit ?? t.total / t.qty))
-}
-
 export function Hero() {
   const { content, media } = useContent()
   const { editionId, setEditionId } = useSelection()
   const { hero, pricing, ui } = content
-  const from = `${pricing.currency} ${minPerUnit(pricing.tiers)}`
+  const from = `${pricing.currency} ${unitPrice(pricing.tiers)}`
   return (
     <section className="hero" id="inicio">
       <div className="container hero-grid">
@@ -583,26 +579,40 @@ export function FinalCta() {
 }
 
 export function Footer() {
-  const { content } = useContent()
-  const { footer, brand } = content
+  const { content, waLink } = useContent()
+  const { footer, brand, nav, hero, ui } = content
   return (
     <footer id="pie" className="footer">
-      <div className="container">
-        <span className="footer-wordmark">{brand.wordmark}</span>
-        {footer.links.length > 0 && (
-          <nav className="footer-links">
-            {footer.links.map((l) => (
-              <span key={l} className="footer-link-pending">
-                {l}
-              </span>
-            ))}
-          </nav>
-        )}
-        {footer.legal && <p>{footer.legal}</p>}
-        <p>
-          {footer.address ? `${footer.address} · ` : null}
+      <div className="container footer-grid">
+        <div className="footer-brand">
+          <span className="footer-wordmark">{brand.wordmark}</span>
+          <p>{hero.sub}</p>
+        </div>
+        <nav className="footer-nav" aria-label="Secciones">
+          {nav.links.map((l) => (
+            <a key={l.href} href={l.href}>
+              {l.label}
+            </a>
+          ))}
+        </nav>
+        <div className="footer-contact">
+          <a className="btn btn-wa footer-wa" href={waLink(ui.whatsappCta)} target="_blank" rel="noreferrer">
+            <WaIcon />
+            {ui.whatsappCta}
+          </a>
           <a href={`mailto:${brand.email}`}>{brand.email}</a>
-        </p>
+          {footer.address && <span>{footer.address}</span>}
+        </div>
+      </div>
+      <div className="container footer-bottom">
+        <span>
+          © {new Date().getFullYear()} {brand.wordmark}
+        </span>
+        {content.topBanner && <span>{content.topBanner}</span>}
+        {footer.legal && <span>{footer.legal}</span>}
+        {footer.links.map((l) => (
+          <span key={l}>{l}</span>
+        ))}
       </div>
     </footer>
   )

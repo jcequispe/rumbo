@@ -2626,3 +2626,75 @@ html.no-scroll {
 .size-chip {
   margin-bottom: 0;
 }
+
+
+/* ---------- Footer: marca, secciones y contacto sobre café oscuro ---------- */
+.footer {
+  padding: 56px 0 28px;
+  background: var(--navy);
+  color: var(--navy-dim);
+  border-top: 3px solid var(--gold);
+}
+.footer .container.footer-grid {
+  gap: 32px;
+}
+.footer-brand {
+  display: grid;
+  gap: 10px;
+  max-width: 34ch;
+}
+.footer-wordmark {
+  font-size: 2.4rem;
+  line-height: 1;
+  color: var(--navy-fg);
+}
+.footer-nav,
+.footer-contact {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+}
+.footer-nav a,
+.footer-contact > a:not(.btn) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--navy-fg);
+  font-weight: 600;
+  text-decoration: none;
+}
+.footer-nav a:hover,
+.footer-contact > a:not(.btn):hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.footer-wa {
+  width: auto;
+  max-width: 100%;
+  margin-bottom: 8px;
+  padding: 0 22px;
+  background: var(--navy-fg);
+  color: var(--navy);
+  font-size: 0.95rem;
+}
+.footer-wa:hover {
+  background: #fff;
+}
+.footer .container.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(246, 234, 217, 0.16);
+  font-size: 0.85rem;
+}
+@media (min-width: 820px) {
+  .footer .container.footer-grid {
+    grid-template-columns: 1.4fr 0.8fr 1fr;
+    gap: 48px;
+  }
+  .footer {
+    padding-bottom: 28px;
+  }
+}
