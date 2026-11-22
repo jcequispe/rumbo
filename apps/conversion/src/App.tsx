@@ -1,4 +1,3 @@
-import VariantSwitcher from './components/VariantSwitcher'
 import {
   Benefits,
   BuyBox,
@@ -54,7 +53,6 @@ export default function App() {
   return (
     <>
       <Atmosphere />
-      {import.meta.env.DEV && <VariantSwitcher />}
       <ContentProvider>
         <CartProvider>
           <Landing />
