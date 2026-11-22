@@ -137,7 +137,7 @@ export function Hero() {
             <a className="btn btn-primary" href="#pedido">
               {hero.ctaPrimary}
             </a>
-            <a className="link-arrow" href="#detalles">
+            <a className="link-arrow" href="#por-dentro">
               {hero.ctaSecondary} <span aria-hidden="true">↓</span>
             </a>
           </div>
@@ -230,7 +230,7 @@ export function Benefits() {
             )}
           </article>
         )}
-        <div className="benefit-grid">
+        <div className="benefit-grid" id="por-dentro">
           {rest.map((b, i) => (
             <article className="benefit reveal" style={{ transitionDelay: `${i * 80}ms` }} key={b.title}>
               <div className="benefit-media">
