@@ -17,7 +17,7 @@ import {
   TrustBar,
   useReveal,
 } from './components/Sections'
-import { Demo, useParallax } from './components/Experience'
+import { useParallax } from './components/Experience'
 import { CartDrawer, CartToast } from './cart/CartDrawer'
 import { CartProvider } from './cart/CartProvider'
 import { ContentProvider } from './content/ContentProvider'
@@ -37,7 +37,6 @@ function Landing() {
         <TrustBar />
         <Problem />
         <Benefits />
-        <Demo />
         <Details />
         <Proof />
         <Steps />
