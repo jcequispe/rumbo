@@ -409,7 +409,7 @@ export function Demo() {
             <p className="demo-msg" aria-live="polite">
               {msg}
             </p>
-            <a className="btn btn-primary" href="#elige">
+            <a className="btn btn-primary" href="#pedido">
               {demo.cta}
             </a>
             <button type="button" className="text-btn text-btn-center" onClick={reset} hidden={!touched}>

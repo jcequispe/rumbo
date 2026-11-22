@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
+import { WaIcon } from '../cart/CartDrawer'
 import { useCart } from '../cart/CartProvider'
+import { bestTotal, savings } from '../cart/pricing'
 import { useContent } from '../content/ContentProvider'
 import { useSelection } from '../selection'
 import { ZoomImage } from './ZoomImage'
@@ -136,7 +138,7 @@ export function Hero() {
           <PenWrittenTitle title={hero.title} accent={hero.titleAccent} />
           <p className="lead">{hero.sub}</p>
           <div className="hero-actions">
-            <a className="btn btn-primary" href="#elige">
+            <a className="btn btn-primary" href="#pedido">
               {hero.ctaPrimary}
             </a>
             <a className="link-arrow" href="#detalles">
@@ -151,7 +153,7 @@ export function Hero() {
               {content.editions.map((e) => (
                 <a
                   key={e.id}
-                  href="#elige"
+                  href="#pedido"
                   className="hero-dot"
                   style={{ background: e.color }}
                   aria-label={ui.pickOne.replace('{label}', e.label)}
@@ -169,11 +171,6 @@ export function Hero() {
               ))}
             </ul>
           )}
-          <ul className="assurances">
-            {hero.assurances.map((a) => (
-              <li key={a}>{a}</li>
-            ))}
-          </ul>
         </div>
         <div className="hero-media">
           <img className="parallax-img" src={media(hero.image)} alt="" width={1120} height={1600} fetchPriority="high" />
@@ -225,8 +222,10 @@ export function Benefits() {
         </div>
         {first && (
           <article className="benefit benefit-transform reveal">
-            <h3>{first.title}</h3>
-            <TransformSequence before={problem.points} after={first.body} />
+            <div className="benefit-transform-copy">
+              <h3>{first.title}</h3>
+              <TransformSequence before={problem.points} after={first.body} />
+            </div>
             {first.image && (
               <figure className="benefit-figure">
                 <img src={media(first.image)} alt={first.title} loading="lazy" />
@@ -252,58 +251,58 @@ export function Benefits() {
   )
 }
 
-export function EditionPicker() {
+export function BuyBox() {
   const { content, media } = useContent()
-  const { editions, editionsSection, formats, cart } = content
+  const { editions, editionsSection, formats, pricing, gift, guarantee, ui, cart } = content
   const { editionId, setEditionId, formatId, setFormatId } = useSelection()
   const c = useCart()
-  const active = editions.find((e) => e.id === editionId) ?? editions[0]
-  const inCart = c.lines.filter((l) => l.editionId === active.id).reduce((n, l) => n + l.qty, 0)
+  const left = useCountdown(pricing.deadline)
   const perDay = usePerDay()
-  const stage = useRef<HTMLDivElement>(null)
-  const tilt = (e: React.PointerEvent<HTMLDivElement>) => {
-    const el = stage.current
-    if (!el || e.pointerType !== 'mouse' || matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    const r = el.getBoundingClientRect()
-    const x = (e.clientX - r.left) / r.width - 0.5
-    const y = (e.clientY - r.top) / r.height - 0.5
-    el.style.setProperty('--rx', `${(-y * 6).toFixed(2)}deg`)
-    el.style.setProperty('--ry', `${(x * 8).toFixed(2)}deg`)
-  }
-  const untilt = () => {
-    stage.current?.style.setProperty('--rx', '0deg')
-    stage.current?.style.setProperty('--ry', '0deg')
-  }
-  const arrows = (e: React.KeyboardEvent) => {
-    const i = editions.findIndex((x) => x.id === active.id)
-    const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0
-    if (!d) return
-    e.preventDefault()
-    const n = editions[(i + d + editions.length) % editions.length]
-    setEditionId(n.id)
-    requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-edition="${n.id}"]`)?.focus())
-  }
+  const active = editions.find((e) => e.id === editionId) ?? editions[0]
+  const lineQty = c.lines.find((l) => l.editionId === active.id && l.formatId === formatId)?.qty ?? 0
+  const others = c.count - lineQty
+  // Con el carrito vacío se muestra una agenda ya elegida: el botón siempre refleja un pedido real.
+  const qty = c.count || 1
+  const total = bestTotal(pricing.tiers, qty)
+  const saved = savings(pricing.tiers, qty)
+  const single = pricing.tiers.find((t) => t.qty === 1)
+  const pick = (n: number) => c.setQty(active.id, formatId, Math.max(1, n - others))
+
   return (
-    <section className="section section-tint picker" id="elige">
+    <section className="section section-tint buy" id="pedido">
       <div className="container">
         <div className="section-head reveal">
-          <Eyebrow>{editionsSection.eyebrow}</Eyebrow>
-          <h2>{editionsSection.title}</h2>
-          <p className="lead">{editionsSection.sub}</p>
+          <Eyebrow>{pricing.eyebrow}</Eyebrow>
+          <h2>{pricing.title}</h2>
+          <p className="lead">{pricing.tiersNote}</p>
+          {left && (
+            <p className="countdown" role="timer">
+              {pricing.deadlineLabel}{' '}
+              <strong>
+                {left.d}
+                {ui.daysShort} {left.h}
+                {ui.hoursShort} {left.m}
+                {ui.minutesShort}
+              </strong>
+            </p>
+          )}
         </div>
-        <div className="edition-layout reveal">
-          <div className="edition-stage" ref={stage} onPointerMove={tilt} onPointerLeave={untilt}>
-            <img key={active.id} src={media(active.image)} alt={`Portada ${active.label}`} width={1055} height={1491} />
-            <span className="edition-badge" style={{ background: active.color }} aria-hidden="true" />
+
+        <div className="buy-layout reveal">
+          <div className="buy-stage">
+            <img key={active.id} src={media(active.image)} alt={`Portada ${active.label}`} width={1055} height={1491} loading="lazy" />
           </div>
-          <div className="edition-side">
-            <h3 className="edition-name" aria-live="polite">
+
+          <div className="buy-panel">
+            <h3 className="buy-name" aria-live="polite">
               {active.label}
             </h3>
+            {cart.lineDetail && <p className="buy-detail">{cart.lineDetail}</p>}
+
             {editions.length > 1 && (
-              <div className="swatches" role="group" aria-label={editionsSection.title} onKeyDown={arrows}>
+              <div className="swatches" role="group" aria-label={editionsSection.title}>
                 {editions.map((e) => (
-                  <button type="button" key={e.id} data-edition={e.id} className="swatch" aria-pressed={e.id === active.id} onClick={() => setEditionId(e.id)}>
+                  <button type="button" key={e.id} className="swatch" aria-pressed={e.id === active.id} onClick={() => setEditionId(e.id)}>
                     <span className="swatch-dot" style={{ background: e.color }} />
                     <span className="swatch-label">{e.label}</span>
                   </button>
@@ -325,11 +324,52 @@ export function EditionPicker() {
                 </div>
               </>
             )}
-            <button type="button" className="btn btn-primary btn-large btn-block" onClick={() => c.add(active.id, formatId)} disabled={c.atMax}>
-              {cart.addCta}
-              {inCart > 0 && <span className="btn-count">{inCart}</span>}
-            </button>
-            {c.atMax && <p className="fine">{cart.max.replace('{max}', String(content.pricing.maxQty))}</p>}
+
+            <div className="tier-options" role="radiogroup" aria-label={pricing.title}>
+              {pricing.tiers.map((t) => {
+                const tierSaved = single && t.qty > 1 ? single.total * t.qty - t.total : 0
+                return (
+                  <button type="button" role="radio" aria-checked={qty === t.qty} className="tier-option" key={t.qty} onClick={() => pick(t.qty)}>
+                    <span className="tier-radio" aria-hidden="true" />
+                    <span className="tier-option-main">
+                      <strong>
+                        {t.qty} {t.qty === 1 ? pricing.unitOne : pricing.unitMany}
+                      </strong>
+                      {t.note && <span className="tier-option-note">{t.note}</span>}
+                    </span>
+                    <span className="tier-option-price">
+                      <strong>{c.money(t.total)}</strong>
+                      {tierSaved > 0 && <span className="tier-option-save">{ui.savings.replace('{amount}', c.money(tierSaved))}</span>}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+
+            <div className="buy-total">
+              <div className="qty" role="group" aria-label={pricing.title}>
+                <button type="button" onClick={() => pick(qty - 1)} aria-label={cart.decrease} disabled={qty <= 1}>
+                  −
+                </button>
+                <output aria-live="polite">{qty}</output>
+                <button type="button" onClick={() => pick(qty + 1)} aria-label={cart.increase} disabled={qty >= pricing.maxQty}>
+                  +
+                </button>
+              </div>
+              <p className="cart-total">
+                <span>
+                  {cart.total} · {qty} {c.unitLabel(qty)}
+                </span>
+                <strong>{c.money(total)}</strong>
+              </p>
+            </div>
+            {saved > 0 && <p className="cart-savings">{cart.savings.replace('{amount}', c.money(saved))}</p>}
+            {qty >= pricing.maxQty && <p className="fine">{cart.max.replace('{max}', String(pricing.maxQty))}</p>}
+
+            <a className="btn btn-primary btn-large btn-block btn-wa" href={c.checkoutHref} target="_blank" rel="noreferrer">
+              <WaIcon />
+              {pricing.buyLabel} · {c.money(total)}
+            </a>
             <p className="per-day">{perDay}</p>
             <TierNudge />
             {editionsSection.reassure && (
@@ -341,6 +381,26 @@ export function EditionPicker() {
             )}
           </div>
         </div>
+
+        <div className="buy-extras">
+          {gift && (
+            <div className="gift reveal">
+              <div className="gift-media">
+                <img src={media(gift.image)} alt={gift.title} loading="lazy" />
+                <ZoomImage src={media(gift.image)} alt={gift.title} />
+              </div>
+              <div>
+                <span className="gift-tag">{gift.tag}</span>
+                <h3>{gift.title}</h3>
+                <p>{gift.note}</p>
+              </div>
+            </div>
+          )}
+          <div className="guarantee reveal">
+            <h3>{guarantee.title}</h3>
+            <p>{guarantee.body}</p>
+          </div>
+        </div>
       </div>
     </section>
   )
@@ -348,7 +408,7 @@ export function EditionPicker() {
 
 export function Details() {
   const { content, media } = useContent()
-  const { formats, details } = content
+  const { details } = content
   return (
     <section className="section" id="detalles">
       <div className="container details-grid">
@@ -373,10 +433,6 @@ export function Details() {
             ))}
           </ul>
           {details.size && <p className="size-chip">{details.size}</p>}
-          <div className="format-note">
-            <h3>{formats.title}</h3>
-            <p>{formats.body}</p>
-          </div>
         </div>
       </div>
     </section>
@@ -451,117 +507,6 @@ function useCountdown(deadline?: string) {
   return { d: Math.floor(ms / 864e5), h: Math.floor((ms % 864e5) / 36e5), m: Math.floor((ms % 36e5) / 6e4) }
 }
 
-export function Pricing() {
-  const { content, media } = useContent()
-  const { pricing, gift, ui, guarantee, cart } = content
-  const c = useCart()
-  const left = useCountdown(pricing.deadline)
-  const single = pricing.tiers.find((t) => t.qty === 1)
-  const current = [...pricing.tiers].reverse().find((t) => t.qty <= c.count)
-
-  return (
-    <section className="section section-dark" id="pedido">
-      <div className="container">
-        <div className="section-head reveal">
-          <Eyebrow>{pricing.eyebrow}</Eyebrow>
-          <h2>{pricing.title}</h2>
-          <p className="lead">{pricing.tiersNote}</p>
-          {left && (
-            <p className="countdown" role="timer">
-              {pricing.deadlineLabel}{' '}
-              <strong>
-                {left.d}
-                {ui.daysShort} {left.h}
-                {ui.hoursShort} {left.m}
-                {ui.minutesShort}
-              </strong>
-            </p>
-          )}
-        </div>
-
-        <ul className="tiers reveal">
-          {pricing.tiers.map((t) => {
-            const saved = single && t.qty > 1 ? single.total * t.qty - t.total : 0
-            const here = current?.qty === t.qty
-            return (
-              <li className="tier" aria-current={here ? 'true' : undefined} key={t.qty}>
-                {t.note && <span className="tier-note">{t.note}</span>}
-                <span className="tier-qty">
-                  {t.qty} {t.qty === 1 ? pricing.unitOne : pricing.unitMany}
-                </span>
-                <span className="tier-total">{c.money(t.total)}</span>
-                <span className="tier-per">{t.perUnit ? `${pricing.perUnitLabel} ${c.money(t.perUnit)}` : '\u00a0'}</span>
-                {saved > 0 && <span className="tier-save">{ui.savings.replace('{amount}', c.money(saved))}</span>}
-              </li>
-            )
-          })}
-        </ul>
-
-        <div className="order-card reveal">
-          {c.lines.length === 0 ? (
-            <>
-              <p className="order-empty">{cart.empty}</p>
-              <a className="btn btn-primary btn-large" href="#elige">
-                {cart.emptyCta}
-              </a>
-            </>
-          ) : (
-            <>
-              <ul className="order-lines">
-                {c.lines.map((l) => {
-                  const ed = content.editions.find((e) => e.id === l.editionId)
-                  const fm = content.formats.items.find((f) => f.id === l.formatId)
-                  return (
-                    <li key={`${l.editionId}-${l.formatId}`}>
-                      <span className="order-dot" style={{ background: ed?.color }} />
-                      <span>
-                        {l.qty} × {ed?.label} · {fm?.name}
-                      </span>
-                    </li>
-                  )
-                })}
-              </ul>
-              <p className="cart-total order-total">
-                <span>
-                  {cart.total} · {c.count} {c.unitLabel(c.count)}
-                </span>
-                <strong>{c.money(c.total)}</strong>
-              </p>
-              {c.saved > 0 && <p className="cart-savings">{cart.savings.replace('{amount}', c.money(c.saved))}</p>}
-              <a className="btn btn-primary btn-large btn-block" href={c.checkoutHref} target="_blank" rel="noreferrer">
-                {pricing.buyLabel} · {c.money(c.total)}
-              </a>
-              <button type="button" className="text-btn text-btn-center text-btn-light" onClick={c.open}>
-                {cart.open}
-              </button>
-            </>
-          )}
-          <p className="fine fine-light">{pricing.payNote}</p>
-        </div>
-
-        {gift && (
-        <div className="gift reveal">
-          <div className="gift-media">
-            <img src={media(gift.image)} alt={gift.title} loading="lazy" />
-            <ZoomImage src={media(gift.image)} alt={gift.title} />
-          </div>
-          <div>
-            <span className="gift-tag">{gift.tag}</span>
-            <h3>{gift.title}</h3>
-            <p>{gift.note}</p>
-          </div>
-        </div>
-        )}
-
-        <div className="guarantee reveal">
-          <h3>{guarantee.title}</h3>
-          <p>{guarantee.body}</p>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 export function Unboxing() {
   const { content, media } = useContent()
   const { unboxing } = content
@@ -585,7 +530,7 @@ export function Faq() {
   const { content, waLink } = useContent()
   const [open, setOpen] = useState(0)
   return (
-    <section className="section section-tint" id="preguntas">
+    <section className="section" id="preguntas">
       <div className="container narrow">
         <div className="section-head reveal">
           <Eyebrow>{content.ui.faqEyebrow}</Eyebrow>
@@ -629,7 +574,7 @@ export function FinalCta() {
       <div className="container narrow reveal">
         <h2>{finalCta.title}</h2>
         <p className="lead">{finalCta.sub}</p>
-        <a className="btn btn-primary btn-large" href="#elige">
+        <a className="btn btn-primary btn-large" href="#pedido">
           {finalCta.cta}
         </a>
       </div>
@@ -669,7 +614,7 @@ export function StickyBar() {
   const [show, setShow] = useState(false)
 
   useEffect(() => {
-    const hide = ['inicio', 'elige', 'pedido', 'cierre', 'pie'].map((id) => document.getElementById(id)).filter((e): e is HTMLElement => !!e)
+    const hide = ['inicio', 'pedido', 'cierre', 'pie'].map((id) => document.getElementById(id)).filter((e): e is HTMLElement => !!e)
     const visible = new Set<Element>()
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) {
@@ -690,7 +635,7 @@ export function StickyBar() {
           {content.cart.viewCart} · {c.count} {c.unitLabel(c.count)} · {c.money(c.total)}
         </button>
       ) : (
-        <a className="btn btn-primary" href="#elige" tabIndex={show ? 0 : -1}>
+        <a className="btn btn-primary" href="#pedido" tabIndex={show ? 0 : -1}>
           {content.ui.stickyCta}
         </a>
       )}

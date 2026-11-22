@@ -1,14 +1,13 @@
 import VariantSwitcher from './components/VariantSwitcher'
 import {
   Benefits,
+  BuyBox,
   Details,
-  EditionPicker,
   Faq,
   FinalCta,
   Footer,
   Hero,
   Nav,
-  Pricing,
   Problem,
   Proof,
   SelectionProvider,
@@ -42,8 +41,7 @@ function Landing() {
         <Details />
         <Proof />
         <Steps />
-        <EditionPicker />
-        <Pricing />
+        <BuyBox />
         <Faq />
         <FinalCta />
       </main>
