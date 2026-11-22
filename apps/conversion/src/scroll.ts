@@ -35,12 +35,21 @@ export function useScrollEngine() {
       const el = document.getElementById(id)
       if (!el) return
       e.preventDefault()
-      // --switcher-h solo existe (32px) mientras la barra de revisión interna
-      // está montada (desarrollo); en producción es 0. Se lee en vivo en vez
-      // de asumir un valor fijo para que el salto de ancla no se desalinee
-      // según el entorno. El +72 es el mismo margen que scroll-padding-top.
-      const switcherH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--switcher-h')) || 0
-      lenis.scrollTo(el, { offset: -(switcherH + 72) })
+      if (id === 'inicio') {
+        lenis.scrollTo(0)
+        return
+      }
+      // Lenis ya descuenta scroll-padding-top (alto real de la barra fija, ver Nav)
+      // y el scroll-margin-top del destino: no se suma ningún margen aquí, o el
+      // salto queda desplazado el doble.
+      const expected = () =>
+        (parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0) + (parseFloat(getComputedStyle(el).scrollMarginTop) || 0)
+      lenis.scrollTo(el, {
+        // Si mientras se desplazaba cargó una foto y movió la página, se corrige al llegar.
+        onComplete: () => {
+          if (Math.abs(el.getBoundingClientRect().top - expected()) > 2) lenis.scrollTo(el, { immediate: true })
+        },
+      })
     }
     document.addEventListener('click', onAnchorClick)
 

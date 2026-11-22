@@ -36,7 +36,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--switcher-h) + 72px);
+  scroll-padding-top: calc(var(--switcher-h) + var(--nav-h, 65px));
 }
 
 body {
@@ -2706,4 +2706,10 @@ html.no-scroll {
   .footer {
     padding-bottom: 28px;
   }
+}
+
+
+/* Destinos de ancla que no son una sección completa: un respiro bajo la barra fija. */
+#por-dentro {
+  scroll-margin-top: 16px;
 }

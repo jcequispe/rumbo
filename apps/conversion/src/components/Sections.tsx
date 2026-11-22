@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { WaIcon } from '../cart/CartDrawer'
 import { useCart } from '../cart/CartProvider'
 import { bestTotal, savings, unitPrice } from '../cart/pricing'
@@ -71,6 +71,18 @@ export function Nav() {
   const { content, media } = useContent()
   const cart = useCart()
   const [menuOpen, setMenuOpen] = useState(false)
+  const header = useRef<HTMLElement>(null)
+
+  // Los saltos de ancla dejan el destino justo bajo la barra: se publica su alto real.
+  useEffect(() => {
+    const el = header.current
+    if (!el) return
+    const set = () => document.documentElement.style.setProperty('--nav-h', `${el.offsetHeight}px`)
+    set()
+    const ro = new ResizeObserver(set)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   useEffect(() => {
     if (!menuOpen) return
@@ -85,7 +97,7 @@ export function Nav() {
   }, [menuOpen])
 
   return (
-    <header className="nav">
+    <header className="nav" ref={header}>
       <div className="container nav-inner">
         <a className="nav-wordmark" href="#inicio" aria-label={content.brand.wordmark}>
           {content.brand.logo ? <img src={media(content.brand.logo)} alt={content.brand.wordmark} className="nav-logo" /> : content.brand.wordmark}
