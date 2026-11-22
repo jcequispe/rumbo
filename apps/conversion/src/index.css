@@ -600,7 +600,7 @@ a {
   position: relative;
   overflow: hidden;
   border-radius: var(--radius);
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 3 / 2;
 }
 
 .details-media img {
