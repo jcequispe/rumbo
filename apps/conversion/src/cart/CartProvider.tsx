@@ -100,9 +100,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setLines((prev) => {
         const others = prev.reduce((n, l) => (same(l, editionId, formatId) ? n : n + l.qty), 0)
         const capped = Math.min(qty, pricing.maxQty - others)
-        return capped <= 0
-          ? prev.filter((l) => !same(l, editionId, formatId))
-          : prev.map((l) => (same(l, editionId, formatId) ? { ...l, qty: capped } : l))
+        if (capped <= 0) return prev.filter((l) => !same(l, editionId, formatId))
+        return prev.some((l) => same(l, editionId, formatId))
+          ? prev.map((l) => (same(l, editionId, formatId) ? { ...l, qty: capped } : l))
+          : [...prev, { editionId, formatId, qty: capped }]
       }),
     [pricing.maxQty],
   )
@@ -113,20 +114,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const money = useCallback((n: number) => `${pricing.currency}\u00A0${formatMoney(n)}`, [pricing.currency])
   const unitLabel = useCallback((n: number) => (n === 1 ? pricing.unitOne : pricing.unitMany), [pricing.unitOne, pricing.unitMany])
 
+  // Con el carrito vacío, el pedido por defecto es una agenda: el botón de compra nunca lleva a un mensaje en blanco.
   const checkoutHref = useMemo(() => {
-    const body = lines
+    const order = lines.length ? lines : [{ editionId: content.editions[0].id, formatId: content.formats.items[0].id, qty: 1 }]
+    const n = order.reduce((s, l) => s + l.qty, 0)
+    const body = order
       .map((l) => {
         const { edition, format } = labelOf(l)
         return cart.messageLine.replace('{qty}', String(l.qty)).replace('{edition}', edition).replace('{format}', format)
       })
       .join('\n')
     const totalLine = cart.messageTotal
-      .replace('{total}', money(total).replace(/\u00A0/g, ' '))
-      .replace('{count}', String(count))
-      .replace('{unit}', unitLabel(count))
+      .replace('{total}', money(bestTotal(pricing.tiers, n)).replace(/\u00A0/g, ' '))
+      .replace('{count}', String(n))
+      .replace('{unit}', unitLabel(n))
     const outro = cart.messageOutro ? `\n\n${cart.messageOutro}` : ''
     return waLink(`${cart.messageIntro}\n${body}\n${totalLine}${outro}`)
-  }, [lines, cart, labelOf, money, total, count, unitLabel, waLink])
+  }, [lines, content, cart, pricing.tiers, labelOf, money, unitLabel, waLink])
 
   const value: CartCtx = {
     lines,

@@ -2334,3 +2334,295 @@ html.no-scroll {
   user-select: none;
   -webkit-user-drag: none;
 }
+
+
+/* =====================================================================
+   Rediseño de conversión (un solo producto)
+   - Móvil: titular y botón antes que la foto (la acción entra en la
+     primera pantalla); fotos de beneficios recortadas a 4:3.
+   - Compra: UNA sola caja (portada + cantidad + total + WhatsApp) en
+     vez de "elegir" y "pedido" por separado.
+   ===================================================================== */
+.benefit-media,
+.benefit-figure {
+  aspect-ratio: 4 / 3;
+}
+.benefit-media img,
+.benefit-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.benefit-transform h3 {
+  padding: 0 8px;
+}
+
+.buy {
+  background: color-mix(in srgb, var(--ed) 9%, var(--tint));
+}
+.buy .section-head {
+  margin-bottom: clamp(24px, 3vw, 36px);
+}
+.buy-layout {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+.buy-stage {
+  width: 100%;
+  max-width: 220px;
+  margin: 0 auto;
+  aspect-ratio: 1055 / 1491;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--tint);
+  box-shadow: 0 40px 70px -40px color-mix(in srgb, var(--ed) 70%, #000);
+}
+.buy-stage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.buy-panel {
+  padding: 22px 18px 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 6px);
+  box-shadow: 0 30px 60px -40px rgba(74, 49, 21, 0.45);
+}
+.buy-name {
+  font-size: clamp(2rem, 5vw, 2.6rem);
+}
+.buy-detail {
+  margin-top: 4px;
+  font-size: 0.95rem;
+  color: var(--fg-dim);
+}
+.tier-options {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+}
+.tier-option {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 68px;
+  padding: 12px 16px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  cursor: pointer;
+  transition:
+    border-color 0.2s var(--ease),
+    background 0.2s var(--ease),
+    box-shadow 0.2s var(--ease);
+}
+.tier-option:hover {
+  border-color: var(--gold);
+}
+.tier-option[aria-checked='true'] {
+  border-color: var(--action);
+  background: #fff;
+  box-shadow: 0 14px 28px -22px rgba(74, 49, 21, 0.6);
+}
+.tier-radio {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--fg-dim);
+  border-radius: 50%;
+}
+.tier-option[aria-checked='true'] .tier-radio {
+  border-color: var(--action);
+}
+.tier-option[aria-checked='true'] .tier-radio::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--action);
+}
+.tier-option-main {
+  display: grid;
+  gap: 2px;
+}
+.tier-option-note {
+  font-size: 0.82rem;
+  color: var(--fg-dim);
+}
+.tier-option-price {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+}
+.tier-option-price strong {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+}
+.tier-option-save {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e3f3e8;
+  color: #0d6b3a;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.buy-total {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.buy-total .cart-total {
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.buy-total .cart-total span {
+  font-size: 0.9rem;
+  color: var(--fg-dim);
+}
+.buy-panel .cart-savings {
+  margin-top: 6px;
+  text-align: right;
+}
+.buy-panel .btn-wa {
+  margin-top: 16px;
+  padding: 0 16px;
+}
+.buy-panel > .fine {
+  margin-top: 8px;
+}
+.buy-extras {
+  display: grid;
+  gap: 20px;
+  margin-top: clamp(32px, 5vw, 56px);
+}
+.buy .gift {
+  margin-top: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.buy .gift-media {
+  max-width: 220px;
+}
+.buy .gift p,
+.buy .guarantee p {
+  color: var(--fg-dim);
+}
+.buy .guarantee {
+  margin-top: 0;
+  border-color: color-mix(in srgb, var(--gold) 60%, transparent);
+}
+
+@media (max-width: 819px) {
+  .hero {
+    padding-top: 28px;
+  }
+  .hero-grid {
+    gap: 0;
+  }
+  /* Los hijos del texto pasan a ser celdas de la grilla: así la foto puede ir DESPUÉS del botón. */
+  .hero-copy {
+    display: contents;
+  }
+  .hero-copy > .eyebrow {
+    order: 1;
+  }
+  .hero-copy > h1 {
+    order: 2;
+  }
+  .hero-copy > .lead {
+    order: 3;
+  }
+  .hero-actions {
+    order: 4;
+    margin-top: 22px;
+  }
+  .hero-actions .btn {
+    flex: 1 1 100%;
+  }
+  .hero-price,
+  .hero-pick {
+    order: 5;
+  }
+  .hero-media {
+    order: 6;
+    margin-top: 24px;
+    aspect-ratio: 4 / 5;
+  }
+  .chips {
+    order: 7;
+  }
+  .buy-panel .btn-wa {
+    padding: 0 12px;
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+  .steps {
+    gap: 14px;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    column-gap: 16px;
+    padding: 20px;
+  }
+  .step-n {
+    grid-row: 1 / span 2;
+    margin: 0;
+  }
+  .step h3 {
+    align-self: center;
+  }
+}
+
+@media (min-width: 820px) {
+  .benefit-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .benefit-transform {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+    padding: 36px;
+  }
+  .benefit-transform .benefit-figure {
+    margin: 0;
+    aspect-ratio: 5 / 4;
+  }
+  .buy-layout {
+    grid-template-columns: minmax(280px, 400px) 1fr;
+    gap: 56px;
+  }
+  .buy-stage {
+    max-width: none;
+    position: sticky;
+    top: 96px;
+  }
+  .buy-panel {
+    padding: 32px;
+  }
+  .buy-extras {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+
+.size-chip {
+  margin-bottom: 0;
+}

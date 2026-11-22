@@ -3,6 +3,14 @@ import { TierNudge } from '../components/Experience'
 import { useContent } from '../content/ContentProvider'
 import { useCart } from './CartProvider'
 
+export function WaIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+      <path d="M12.04 2a9.9 9.9 0 0 0-8.4 15.1L2 22l5-1.6A9.9 9.9 0 1 0 12.04 2Zm5.8 14c-.25.7-1.4 1.3-1.95 1.35-.5.05-1.1.07-1.8-.12a14 14 0 0 1-4.3-2.4 8.5 8.5 0 0 1-2.2-3c-.45-1.1-.2-1.9.2-2.4.35-.4.9-.55 1.2-.5h.4c.15 0 .3.05.5.5l.7 1.7c.05.15.1.3 0 .45-.2.35-.4.5-.55.7-.15.15-.3.3-.12.6a7 7 0 0 0 3.2 2.75c.3.15.5.1.65-.1l.8-1c.2-.25.4-.2.65-.1l1.65.8c.25.12.4.2.5.3.1.2.1.8-.15 1.5Z" />
+    </svg>
+  )
+}
+
 export function CartDrawer() {
   const { content, media } = useContent()
   const { cart } = content
@@ -52,7 +60,7 @@ export function CartDrawer() {
             <p>{cart.emptyHint}</p>
             <a
               className="btn btn-primary"
-              href="#elige"
+              href="#pedido"
               onClick={() => c.close()}
             >
               {cart.emptyCta}
@@ -100,9 +108,7 @@ export function CartDrawer() {
                 <strong>{c.money(c.total)}</strong>
               </p>
               <a className="btn btn-primary btn-large btn-wa" href={c.checkoutHref} target="_blank" rel="noreferrer">
-                <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-                  <path d="M12.04 2a9.9 9.9 0 0 0-8.4 15.1L2 22l5-1.6A9.9 9.9 0 1 0 12.04 2Zm5.8 14c-.25.7-1.4 1.3-1.95 1.35-.5.05-1.1.07-1.8-.12a14 14 0 0 1-4.3-2.4 8.5 8.5 0 0 1-2.2-3c-.45-1.1-.2-1.9.2-2.4.35-.4.9-.55 1.2-.5h.4c.15 0 .3.05.5.5l.7 1.7c.05.15.1.3 0 .45-.2.35-.4.5-.55.7-.15.15-.3.3-.12.6a7 7 0 0 0 3.2 2.75c.3.15.5.1.65-.1l.8-1c.2-.25.4-.2.65-.1l1.65.8c.25.12.4.2.5.3.1.2.1.8-.15 1.5Z" />
-                </svg>
+                <WaIcon />
                 {cart.checkout}
               </a>
               <button type="button" className="text-btn text-btn-center" onClick={c.close}>
