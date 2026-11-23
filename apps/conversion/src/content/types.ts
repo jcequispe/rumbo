@@ -7,6 +7,7 @@ export interface Content {
   brand: { wordmark: string; email: string; logo?: string }
   whatsapp: { number: string }
   topBanner?: string
+  scarcity?: { label: string; note: string }
   nav: { links: { label: string; href: string }[] }
   hero: {
     eyebrow: string
