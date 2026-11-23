@@ -88,6 +88,7 @@ export interface Content {
     payNote: string
   }
   gift?: { tag: string; title: string; note: string; image: string }
+  bonus?: { eyebrow: string; title: string; summary: string; tag: string; items: { title: string; body: string }[] }
   unboxing: { title: string; body: string; image: string }
   guarantee: { title: string; body: string }
   faq: { q: string; a: string }[]

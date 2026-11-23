@@ -261,7 +261,7 @@ export function Benefits() {
 
 export function BuyBox() {
   const { content, media } = useContent()
-  const { editions, editionsSection, formats, pricing, gift, guarantee, ui, cart } = content
+  const { editions, editionsSection, formats, pricing, gift, guarantee, ui, cart, bonus } = content
   const { editionId, setEditionId, formatId, setFormatId } = useSelection()
   const c = useCart()
   const left = useCountdown(pricing.deadline)
@@ -306,6 +306,11 @@ export function BuyBox() {
               {active.label}
             </h3>
             {cart.lineDetail && <p className="buy-detail">{cart.lineDetail}</p>}
+            {bonus && (
+              <p className="buy-bonus">
+                <span>{bonus.eyebrow}</span> {bonus.summary}
+              </p>
+            )}
 
             {editions.length > 1 && (
               <div className="swatches" role="group" aria-label={editionsSection.title}>
@@ -442,6 +447,50 @@ export function Details() {
           </ul>
           {details.size && <p className="size-chip">{details.size}</p>}
         </div>
+      </div>
+    </section>
+  )
+}
+
+function BonusIcon({ i }: { i: number }) {
+  const common = { width: 26, height: 26, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, 'aria-hidden': true }
+  return i === 0 ? (
+    <svg {...common}>
+      <path d="M6 3h11a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6z" />
+      <path d="M6 3v18M10 8h5M10 12h5" />
+      <path d="m15 21 3-3" />
+    </svg>
+  ) : (
+    <svg {...common}>
+      <path d="M4 14v-2a8 8 0 0 1 16 0v2" />
+      <rect x="3" y="14" width="4" height="6" rx="1.5" />
+      <rect x="17" y="14" width="4" height="6" rx="1.5" />
+    </svg>
+  )
+}
+
+export function Bonus() {
+  const { bonus } = useContent().content
+  if (!bonus) return null
+  return (
+    <section className="section section-tint bonus" id="bonos">
+      <div className="container">
+        <div className="section-head reveal">
+          <Eyebrow>{bonus.eyebrow}</Eyebrow>
+          <h2>{bonus.title}</h2>
+        </div>
+        <ul className="bonus-grid">
+          {bonus.items.map((b, i) => (
+            <li className="bonus-card reveal" style={{ transitionDelay: `${i * 80}ms` }} key={b.title}>
+              <span className="bonus-tag">{bonus.tag}</span>
+              <span className="bonus-icon">
+                <BonusIcon i={i} />
+              </span>
+              <h3>{b.title}</h3>
+              <p>{b.body}</p>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   )

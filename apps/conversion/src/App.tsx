@@ -1,5 +1,6 @@
 import {
   Benefits,
+  Bonus,
   BuyBox,
   Details,
   Faq,
@@ -37,6 +38,7 @@ function Landing() {
         <Problem />
         <Benefits />
         <Details />
+        <Bonus />
         <Proof />
         <Steps />
         <BuyBox />
