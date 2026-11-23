@@ -128,8 +128,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       .replace('{total}', money(bestTotal(pricing.tiers, n)).replace(/\u00A0/g, ' '))
       .replace('{count}', String(n))
       .replace('{unit}', unitLabel(n))
+    const bonusLine = cart.messageBonus ? `\n${cart.messageBonus}` : ''
     const outro = cart.messageOutro ? `\n\n${cart.messageOutro}` : ''
-    return waLink(`${cart.messageIntro}\n${body}\n${totalLine}${outro}`)
+    return waLink(`${cart.messageIntro}\n${body}\n${totalLine}${bonusLine}${outro}`)
   }, [lines, content, cart, pricing.tiers, labelOf, money, unitLabel, waLink])
 
   const value: CartCtx = {

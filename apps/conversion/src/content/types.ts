@@ -88,7 +88,7 @@ export interface Content {
     payNote: string
   }
   gift?: { tag: string; title: string; note: string; image: string }
-  bonus?: { eyebrow: string; title: string; summary: string; tag: string; items: { title: string; body: string }[] }
+  bonus?: { eyebrow: string; title: string; lead?: string; mainTitle?: string; summary: string; tag: string; note?: string; cta?: string; items: { title: string; body: string; kicker?: string }[] }
   unboxing: { title: string; body: string; image: string }
   guarantee: { title: string; body: string }
   faq: { q: string; a: string }[]
@@ -117,6 +117,7 @@ export interface Content {
     messageTotal: string
     /** Opcional: texto al final del mensaje de WhatsApp (p. ej. campos para completar). */
     messageOutro?: string
+    messageBonus?: string
     /** Opcional: línea bajo el nombre del producto en el carrito (si falta, se usa el nombre del formato). */
     lineDetail?: string
   }
