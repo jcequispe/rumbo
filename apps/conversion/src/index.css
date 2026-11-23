@@ -2388,12 +2388,34 @@ html.no-scroll {
   border-radius: calc(var(--radius) + 6px);
   box-shadow: 0 30px 60px -40px rgba(74, 49, 21, 0.45);
 }
+.buy-name-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+}
 .buy-name {
   font-size: clamp(2rem, 5vw, 2.6rem);
+}
+.buy-scarcity-badge {
+  padding: 3px 11px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #b4432f 14%, var(--surface));
+  border: 1px solid color-mix(in srgb, #b4432f 55%, transparent);
+  color: #9c3a28;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 .buy-detail {
   margin-top: 4px;
   font-size: 0.95rem;
+  color: var(--fg-dim);
+}
+.buy-scarcity-note {
+  margin-top: 6px;
+  font-size: 0.88rem;
   color: var(--fg-dim);
 }
 .tier-options {
@@ -2591,6 +2613,7 @@ html.no-scroll {
   }
   .hero-price,
   .hero-bonus,
+  .hero-scarcity,
   .hero-pick {
     order: 5;
   }
@@ -2862,6 +2885,14 @@ html.no-scroll {
   margin: 10px 0 0;
   font-size: 0.98rem;
   font-weight: 600;
+}
+.hero-scarcity {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin: 8px 0 0;
+  font-size: 0.92rem;
+  color: var(--fg-dim);
 }
 .hero-bonus span,
 .buy-bonus-tag {

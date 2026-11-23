@@ -159,6 +159,11 @@ export function Hero() {
               <span>+ {content.bonus.tag}</span> {content.bonus.summary}
             </p>
           )}
+          {content.scarcity && (
+            <p className="hero-scarcity">
+              <span aria-hidden="true">⏳</span> {content.scarcity.label}: {content.scarcity.note}
+            </p>
+          )}
           {content.editions.length > 1 && (
           <div className="hero-pick">
             <span className="field-label">{ui.heroPick}</span>
@@ -266,7 +271,7 @@ export function Benefits() {
 
 export function BuyBox() {
   const { content, media } = useContent()
-  const { editions, editionsSection, formats, pricing, gift, guarantee, ui, cart, bonus } = content
+  const { editions, editionsSection, formats, pricing, gift, guarantee, ui, cart, bonus, scarcity } = content
   const { editionId, setEditionId, formatId, setFormatId } = useSelection()
   const c = useCart()
   const left = useCountdown(pricing.deadline)
@@ -307,10 +312,14 @@ export function BuyBox() {
           </div>
 
           <div className="buy-panel">
-            <h3 className="buy-name" aria-live="polite">
-              {active.label}
-            </h3>
+            <div className="buy-name-row">
+              <h3 className="buy-name" aria-live="polite">
+                {active.label}
+              </h3>
+              {scarcity && <span className="buy-scarcity-badge">{scarcity.label}</span>}
+            </div>
             {cart.lineDetail && <p className="buy-detail">{cart.lineDetail}</p>}
+            {scarcity && <p className="buy-scarcity-note">{scarcity.note}</p>}
             {bonus && (
               <div className="buy-bonus">
                 <span className="buy-bonus-tag">{bonus.eyebrow}</span>
