@@ -2711,3 +2711,83 @@ html.no-scroll {
 #por-dentro {
   scroll-margin-top: 16px;
 }
+
+
+/* ---------- Bonos gratis ---------- */
+.bonus-grid {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bonus-card {
+  position: relative;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding: 28px 22px 26px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 6px);
+  box-shadow: 0 24px 44px -34px rgba(74, 49, 21, 0.5);
+}
+.bonus-icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--gold) 16%, var(--surface));
+  color: var(--action);
+}
+.bonus-tag {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #1f2230;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.bonus-card h3 {
+  font-size: 1.7rem;
+}
+.bonus-card p {
+  color: var(--fg-dim);
+}
+.buy-bonus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+  margin-top: 14px;
+  padding: 10px 14px;
+  border: 1px dashed color-mix(in srgb, var(--gold) 70%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--gold) 10%, var(--surface));
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+.buy-bonus span {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: #1f2230;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+@media (min-width: 820px) {
+  .bonus-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+  .bonus-card {
+    padding: 34px 30px 32px;
+  }
+}
