@@ -154,6 +154,11 @@ export function Hero() {
             </a>
           </div>
           <p className="hero-price">{ui.fromPrice.replace('{price}', from)}</p>
+          {content.bonus && (
+            <p className="hero-bonus">
+              <span>+ {content.bonus.tag}</span> {content.bonus.summary}
+            </p>
+          )}
           {content.editions.length > 1 && (
           <div className="hero-pick">
             <span className="field-label">{ui.heroPick}</span>
@@ -307,9 +312,16 @@ export function BuyBox() {
             </h3>
             {cart.lineDetail && <p className="buy-detail">{cart.lineDetail}</p>}
             {bonus && (
-              <p className="buy-bonus">
-                <span>{bonus.eyebrow}</span> {bonus.summary}
-              </p>
+              <div className="buy-bonus">
+                <span className="buy-bonus-tag">{bonus.eyebrow}</span>
+                <ul>
+                  {bonus.items.map((b) => (
+                    <li key={b.title}>
+                      <span aria-hidden="true">✓</span> {b.title}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
 
             {editions.length > 1 && (
@@ -470,27 +482,47 @@ function BonusIcon({ i }: { i: number }) {
 }
 
 export function Bonus() {
-  const { bonus } = useContent().content
+  const { content, media } = useContent()
+  const { bonus, pricing, editions } = content
   if (!bonus) return null
+  const price = `${pricing.currency} ${unitPrice(pricing.tiers)}`
   return (
     <section className="section section-tint bonus" id="bonos">
       <div className="container">
         <div className="section-head reveal">
           <Eyebrow>{bonus.eyebrow}</Eyebrow>
           <h2>{bonus.title}</h2>
+          {bonus.lead && <p className="lead">{bonus.lead}</p>}
         </div>
-        <ul className="bonus-grid">
+        <ul className="bonus-stack">
+          <li className="bonus-main reveal">
+            <img src={media(editions[0].image)} alt="" width={1055} height={1491} loading="lazy" />
+            <div>
+              <h3>{bonus.mainTitle ?? editions[0].label}</h3>
+              <p className="bonus-price">{price}</p>
+            </div>
+          </li>
           {bonus.items.map((b, i) => (
-            <li className="bonus-card reveal" style={{ transitionDelay: `${i * 80}ms` }} key={b.title}>
+            <li className="bonus-card reveal" style={{ transitionDelay: `${(i + 1) * 80}ms` }} key={b.title}>
+              <span className="bonus-plus" aria-hidden="true">+</span>
               <span className="bonus-tag">{bonus.tag}</span>
               <span className="bonus-icon">
                 <BonusIcon i={i} />
               </span>
+              {b.kicker && <span className="bonus-kicker">{b.kicker}</span>}
               <h3>{b.title}</h3>
               <p>{b.body}</p>
             </li>
           ))}
         </ul>
+        <div className="bonus-foot reveal">
+          {bonus.note && <p className="bonus-note">{bonus.note}</p>}
+          {bonus.cta && (
+            <a className="btn btn-primary btn-large" href="#pedido">
+              {bonus.cta}
+            </a>
+          )}
+        </div>
       </div>
     </section>
   )
