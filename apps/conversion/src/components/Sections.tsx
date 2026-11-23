@@ -397,6 +397,19 @@ export function BuyBox() {
             </a>
             <p className="per-day">{perDay}</p>
             <TierNudge />
+            {guarantee && (
+              <div className="buy-guarantee">
+                <span className="buy-guarantee-icon" aria-hidden="true">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 3l7 3v5c0 5-3.2 8.5-7 10-3.8-1.5-7-5-7-10V6z" />
+                    <path d="m9 12 2 2 4-4" />
+                  </svg>
+                </span>
+                <p>
+                  <strong>{guarantee.title}</strong> {guarantee.body}
+                </p>
+              </div>
+            )}
             {editionsSection.reassure && (
               <ul className="reassure">
                 {editionsSection.reassure.map((r) => (
@@ -421,10 +434,6 @@ export function BuyBox() {
               </div>
             </div>
           )}
-          <div className="guarantee reveal">
-            <h3>{guarantee.title}</h3>
-            <p>{guarantee.body}</p>
-          </div>
         </div>
       </div>
     </section>

@@ -2502,6 +2502,35 @@ html.no-scroll {
   margin-top: 16px;
   padding: 0 16px;
 }
+.buy-guarantee {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: color-mix(in srgb, var(--gold) 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  border-radius: 14px;
+}
+.buy-guarantee-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #1f2230;
+}
+.buy-guarantee p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--fg-dim);
+}
+.buy-guarantee strong {
+  color: var(--fg);
+}
 .buy-panel > .fine {
   margin-top: 8px;
 }
