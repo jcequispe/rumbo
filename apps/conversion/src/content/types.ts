@@ -91,7 +91,7 @@ export interface Content {
   gift?: { tag: string; title: string; note: string; image: string }
   bonus?: { eyebrow: string; title: string; lead?: string; mainTitle?: string; summary: string; tag: string; note?: string; cta?: string; items: { title: string; body: string; kicker?: string }[] }
   unboxing: { title: string; body: string; image: string }
-  guarantee: { title: string; body: string }
+  guarantee?: { title: string; body: string }
   faq: { q: string; a: string }[]
   finalCta: { title: string; sub: string; cta: string; image?: string }
   cart: {
